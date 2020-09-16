@@ -1,0 +1,9 @@
+.Rproj.user
+
+## Emacs files to ignore
+##
+*~
+
+## miscellaneous files to ignore
+##
+Read-and-delete-me
