@@ -1,5 +1,9 @@
 .Rproj.user
 
+## Stan files to ignore
+##
+*.rds
+
 ## Emacs files to ignore
 ##
 *~
