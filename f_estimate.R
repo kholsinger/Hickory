@@ -10,15 +10,18 @@ rstan_options(auto_write = TRUE)
 #' @param ... Arguments passed to `rstan::sampling` (e.g., iter, chains)
 #' @return An object of class `stanfit` returned by `rstan::sampling`
 #'
-f_stan <- function(n) {
-  stan_data <- list(n = n)
+f_estimate <- function(n) {
+  stan_data <- list(N_loci = nrow(n),
+                    n = n)
   stan_pars <- c("p",
-                 "f")
-  fit <- stan(file = "f_from_geno_estimate.stan",
+                 "f",
+                 "w")
+  fit <- stan(file = "f_estimate.stan",
               data = stan_data,
               pars = stan_pars,
-#              refresh = 0,
-              control = list(adapt_delta = 0.99))
+              refresh = 0,
+              control = list(adapt_delta = 0.999,
+                             max_treedepth = 20))
   return(fit)
 }
 
