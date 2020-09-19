@@ -1,4 +1,7 @@
+## R files to ignore
+##
 .Rproj.user
+*.Rproj
 
 ## Stan files to ignore
 ##
@@ -11,3 +14,9 @@
 ## miscellaneous files to ignore
 ##
 Read-and-delete-me
+*.zip
+kholsinger-Protea-repens-GBS*
+.DS_Store
+.#*
+
+
