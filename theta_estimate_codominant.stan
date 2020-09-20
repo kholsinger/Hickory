@@ -6,17 +6,34 @@ data {
   int<lower=0> N_loci;        // number of loci
   int<lower=0> N_pops;        // number of populations
   int<lower=0> n[N_pops, N_loci, 3]; // genotype counts by locus and pop
+  // prior parameters
+  //
+  real mu_pi;                 // logit of mean(pi)
+  real<lower=0> sd_pi;        // sd of logit(pi)
+  real mu_f;                  // logit of mean(f)
+  real<lower=0> sd_f;         // sd of logit(f)
+  real mu_theta;              // logit of mean(theta)
+  real<lower=0> sd_theta;     // sd of logit(theta)
 }
 
 parameters {
-  real<lower=0, upper=1> f;     // within-population inbreeding coefficient
-  real<lower=0, upper=1> theta; // Fst - Weir & Cockerham
-  vector<lower=0, upper=1>[N_loci] pi;  // mean allele frequencies
-  vector<lower=0, upper=1>[N_loci] p[N_pops]; // allele frequencies by loc & pop
+  real logit_f;               // logit of f
+  real logit_theta;           // logit of theta
+  vector[N_loci] logit_pi;    // logit of pi
+  // allele frequencies by locus & population
+  //
+  vector<lower=0, upper=1>[N_loci] p[N_pops];
 }
 
 transformed parameters {
+  real<lower=0, upper=1> f;     // within-population inbreeding coefficient
+  real<lower=0, upper=1> theta; // Fst - Weir & Cockerham
+  vector<lower=0, upper=1>[N_loci] pi;  // mean allele frequencies
   vector<lower=0, upper=1>[3] x[N_loci, N_pops]; // vector of geno frequencies
+
+  f = inv_logit(logit_f);
+  theta = inv_logit(logit_theta);
+  pi = inv_logit(logit_pi);
 
   for (i in 1:N_loci) {
     for (j in 1:N_pops) { 
@@ -38,9 +55,9 @@ model {
 
   // priors
   //
-  pi ~ beta(1.0, 1.0);
-  f ~ beta(1.0, 1.0);
-  theta ~ beta(1.0, 1.0);
+  logit_pi ~ normal(mu_pi, sd_pi);
+  logit_f ~ normal(mu_f, sd_f);
+  logit_theta ~ normal(mu_theta, sd_theta);
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
       p[j][i] ~ beta(((1.0 - theta)/theta)*pi[i],
