@@ -11,12 +11,13 @@ logit <- function(p) {
 }
 
 logit_prior <- function(prior) {
-  mean <- logit(prior$mean)
-  upper <- logit(prior$upper)
+  lo <- logit(prior$lo)
+  hi <- logit(prior$hi)
   ## set standard deviation as half of distance from mean to upper bound
   ##
-  sd <- (upper - mean)/2.0
-  return(c(mean, sd))
+  mean <- (hi + lo)/2.0
+  sd <- (hi - lo)/4.0
+  return(list(mean = mean, sd = sd))
 }
 
 ## put priors in global namespace so that they are accessible from
@@ -34,9 +35,9 @@ initialize_chains <- function() {
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
 
-  logit_pi <- rnorm(N_loci, logit_prior_pi[1], logit_prior_pi[2])
-  logit_f <- rnorm(1, logit_prior_f[1], logit_prior_f[2])
-  logit_theta <- rnorm(1, logit_prior_theta[1], logit_prior_theta[2])
+  logit_pi <- rnorm(N_loci, logit_prior_pi$mean, logit_prior_pi$sd)
+  logit_f <- rnorm(1, logit_prior_f$mean, logit_prior_f$sd)
+  logit_theta <- rnorm(1, logit_prior_theta$mean, logit_prior_theta$sd)
 
   list(logit_pi = logit_pi,
        logit_f = logit_f,
@@ -44,9 +45,9 @@ initialize_chains <- function() {
 }
 
 analyze_codominant <- function(genos,
-                               prior_pi = list(mean = 0.5, upper = 0.9),
-                               prior_f = list(mean = 0.1, upper = 0.2),
-                               prior_theta = list(mean = 0.1, upper = 0.2),
+                               prior_pi = list(lo = 0.1, hi = 0.9),
+                               prior_f = list(lo = 0.01, hi = 0.2),
+                               prior_theta = list(lo = 0.01, hi = 0.2),
                                ...)
 {
   set_priors(prior_pi = prior_pi,
@@ -59,12 +60,12 @@ analyze_codominant <- function(genos,
   stan_data <- list(N_loci = genos$N_loci,
                     N_pops = genos$N_pop,
                     n = genos$n,
-                    mu_pi = logit_prior_pi[1],
-                    sd_pi = logit_prior_pi[2],
-                    mu_f = logit_prior_f[1],
-                    sd_f = logit_prior_f[2],
-                    mu_theta = logit_prior_theta[1],
-                    sd_theta = logit_prior_theta[2])
+                    mu_pi = logit_prior_pi$mean,
+                    sd_pi = logit_prior_pi$sd,
+                    mu_f = logit_prior_f$mean,
+                    sd_f = logit_prior_f$sd,
+                    mu_theta = logit_prior_theta$mean,
+                    sd_theta = logit_prior_theta$sd)
   stan_pars <- c("f",
                  "theta",
                  "p",
@@ -86,9 +87,9 @@ analyze_codominant <- function(genos,
 }
 
 analyze_dominant <- function(genos,
-                             prior_pi = list(mean = 0.5, upper = 0.9),
-                             prior_f = list(mean = 0.1, upper = 0.2),
-                             prior_theta = list(mean = 0.1, upper = 0.2),
+                             prior_pi = list(lo = 0.1, hi = 0.9),
+                             prior_f = list(lo = 0.01, hi = 0.2),
+                             prior_theta = list(lo = 0.01, hi = 0.2),
                              ...)
 {
   set_priors(prior_pi = prior_pi,
@@ -102,12 +103,12 @@ analyze_dominant <- function(genos,
                     N_pops = genos$N_pop,
                     n = genos$n[, , 2],
                     N = genos$N,
-                    mu_pi = logit_prior_pi[1],
-                    sd_pi = logit_prior_pi[2],
-                    mu_f = logit_prior_f[1],
-                    sd_f = logit_prior_f[2],
-                    mu_theta = logit_prior_theta[1],
-                    sd_theta = logit_prior_theta[2])
+                    mu_pi = logit_prior_pi$mean,
+                    sd_pi = logit_prior_pi$sd,
+                    mu_f = logit_prior_f$mean,
+                    sd_f = logit_prior_f$sd,
+                    mu_theta = logit_prior_theta$mean,
+                    sd_theta = logit_prior_theta$sd)
   stan_pars <- c("f",
                  "theta",
                  "p",

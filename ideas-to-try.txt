@@ -1,0 +1,14 @@
+define lambda = (1 - theta)/theta
+use Pareto prior on lambda
+(see Stan manual pp. 286-287)
+
+use
+z[1] <- p^2 + fpq
+x[2\ <- 2pq(1-f)
+x[3] <- q^2 + fpq
+set
+n[1] <- ((p^2 + fpq)/((p^2 + fpq) + 2pq(1-f)))*n
+n[2] <- (2pq(1-f)/((p^2 + fpq) + 2pq(1-f)))*n
+n[3] <- N - n
+sample
+n ~ dirichlet(x)
