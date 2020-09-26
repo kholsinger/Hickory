@@ -65,12 +65,25 @@ transformed parameters {
 model {
   // likelihood
   //
-  // NOTE: Jacobian adjustment is probably needed
-  // x[i,j][k] is a parameter
-  // n_exp[i,j][k] is a change of variables
-  //  for (i in 1:N_loci) {
+  // NOTE: Jacobian adjustment is needed
+  // x[i,j][k] is the parameter
+  // n_exp[i,j][k] is a change of variables from x[i,j][k]
+  //
+  for (i in 1:N_loci) {
     for (j in 1:N_pops) {
+//      matrix[3,3] Jacobian;
+      
       n_exp[i,j] ~ dirichlet(alpha[i,j]);
+//      Jacobian[1,1] =
+//      Jacobian[1,2] =
+//      Jacobian[1,3] = 0.0;
+//      Jacobian[2,1] =
+//      Jacobian[2,2] =
+//      Jacobian[2,3] = 0.0;
+//      Jacobian[3,1] =
+//      Jacobian[3,2] =
+//      Jacobian[3,3] =
+//    target +=log(fabs(determinant(Jacobian)));
     }
   }
 
