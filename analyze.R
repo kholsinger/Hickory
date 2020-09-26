@@ -20,12 +20,22 @@ logit_prior <- function(prior) {
   return(list(mean = mean, sd = sd))
 }
 
+## put priors in global namespace so that they are accessible from
+## initialize_chains()
+##
+set_priors <- function(prior_pi, prior_f, prior_theta, N_loci) {
+  prior_pi <<- prior_pi
+  prior_f <<- prior_f
+  prior_theta <<- prior_theta
+  N_loci <<- N_loci
+}
+
 initialize_chains <- function() {
   logit_prior_pi <- logit_prior(prior_pi)
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
 
-  logit_pi <- rnorm(analyze_N_loci, logit_prior_pi$mean, logit_prior_pi$sd)
+  logit_pi <- rnorm(N_loci, logit_prior_pi$mean, logit_prior_pi$sd)
   logit_f <- rnorm(1, logit_prior_f$mean, logit_prior_f$sd)
   logit_theta <- rnorm(1, logit_prior_theta$mean, logit_prior_theta$sd)
 
@@ -40,6 +50,10 @@ analyze_codominant <- function(genos,
                                prior_theta = list(lo = 0.01, hi = 0.2),
                                ...)
 {
+  set_priors(prior_pi = prior_pi,
+             prior_f = prior_f,
+             prior_theta = prior_theta,
+             N_loci = genos$N_loci)
   logit_prior_pi <- logit_prior(prior_pi)
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
@@ -59,7 +73,7 @@ analyze_codominant <- function(genos,
   fit <- stan(file = "theta_estimate_codominant.stan",
               data = stan_data,
               pars = stan_pars,
-#              init = initialize_chains,
+              init = initialize_chains,
               ...)
   print(fit, pars = c("f", "theta", "lp__"), digits_summary = 3)
   suppressMessages(
@@ -78,6 +92,10 @@ analyze_dominant <- function(genos,
                              prior_theta = list(lo = 0.01, hi = 0.2),
                              ...)
 {
+  set_priors(prior_pi = prior_pi,
+             prior_f = prior_f,
+             prior_theta = prior_theta,
+             N_loci = genos$N_loci)
   logit_prior_pi <- logit_prior(prior_pi)
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
@@ -98,7 +116,7 @@ analyze_dominant <- function(genos,
   fit <- stan(file = "theta_estimate_dominant.stan",
               data = stan_data,
               pars = stan_pars,
-#              init = initialize_chains,
+              init = initialize_chains,
               ...)
   print(fit, pars = c("f", "theta", "lp__"), digits_summary = 3)
   suppressMessages(

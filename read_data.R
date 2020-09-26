@@ -35,19 +35,10 @@ read_marker_data <- function(filename) {
   ## -1 because first column is pop
   ##
   colnames(N) <- colnames(markers)[-1]
-
-  ## identify any loci where populations have no observations
-  ## and exclude them from analysis
-  ##
-  min_count <- apply(N, 2, min)
-  N_loci <- N_loci - length(which(min_count == 0))
-  n <- n[, which(min_count > 0), ]
-  N <- N[, which(min_count > 0)]
-
-  list(N_pops = N_pops,
-       N_loci = N_loci,
-       n = n,
-       N = N)
+  list(N_pops=N_pops,
+       N_loci=N_loci,
+       n=n,
+       N=N)
 }
 
 

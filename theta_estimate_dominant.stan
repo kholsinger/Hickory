@@ -20,6 +20,7 @@ data {
 parameters {
   real logit_f;               // logit of f
   real logit_theta;           // logit of theta
+  real<lower=0.1> lambda;     //
   vector[N_loci] logit_pi;    // logit of pi
   // allele frequencies by locus & population
   //
@@ -30,36 +31,17 @@ transformed parameters {
   real<lower=0, upper=1> f;     // within-population inbreeding coefficient
   real<lower=0, upper=1> theta; // Fst - Weir & Cockerham
   vector<lower=0, upper=1>[N_loci] pi;  // mean allele frequencies
-  // for expected counts calculation
-  //
-  simplex[3] x[N_loci, N_pops]; // simplex of geno frequencies
-  vector[3] n_exp_ct[N_loci, N_pops];  // expected genotype counts
-  simplex[3] n_exp[N_loci, N_pops];  // expected genotype freqs (from counts)
-  vector<lower=0>[3] alpha[N_loci, N_pops];  // Dirichlet parameters
-
+  real<lower=0, upper=1> x[N_loci, N_pops]; // dominant phenotype frequencies
 
   f = inv_logit(logit_f);
-  theta = inv_logit(logit_theta);
+  // theta = inv_logit(logit_theta);
+  theta = 1.0/(1.0 + lambda);
   pi = inv_logit(logit_pi);
 
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-      // genotype frequencies
-      //
-      x[i,j][1] = (p[j][i]^2)*(1.0 - f) + f*p[j][i];
-      x[i,j][2] = 2.0*p[j][i]*(1.0 - p[j][i])*(1-f);
-      x[i,j][3] = ((1.0 - p[j][i])^2)*(1.0 - f) + f*(1.0 - p[j][i]);
-      // expected counts
-      //
-      n_exp_ct[i,j][1] = (x[i,j][1]/(x[i,j][1] + x[i,j][2]))*n[j,i];
-      n_exp_ct[i,j][2] = (x[i,j][2]/(x[i,j][1] + x[i,j][2]))*n[j,i];
-      n_exp_ct[i,j][3] = N[j,i] - n[j,i];
-      for (k in 1:3) {
-        // smoothed away from (0,1) with flat Dirichlet prior
-        //
-        n_exp[i,j][k] = (n_exp_ct[i,j][k] + 1.0)/(N[j,i] + 3.0);
-        alpha[i,j][k] = N[j,i]*x[i,j][k];
-      }
+      x[i,j] = (p[j][i]^2)*(1.0 - f) + f*p[j][i] +
+               2.0*p[j][i]*(1.0 - p[j][i])*(1-f);
     }
   }
 }
@@ -69,7 +51,7 @@ model {
   //
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-      n_exp[i,j] ~ dirichlet(alpha[i,j]);
+      n[j,i] ~ binomial(n[j,i], x[i,j]);
     }
   }
 
@@ -78,10 +60,12 @@ model {
   logit_pi ~ normal(mu_pi, sd_pi);
   logit_f ~ normal(mu_f, sd_f);
   logit_theta ~ normal(mu_theta, sd_theta);
+  lambda ~ pareto(0.1, 1.5);
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-      p[j][i] ~ beta(((1.0 - theta)/theta)*pi[i],
-                    ((1.0 - theta)/theta)*(1.0 - pi[i]));
+      // p[j][i] ~ beta(((1.0 - theta)/theta)*pi[i],
+      //               ((1.0 - theta)/theta)*(1.0 - pi[i]));
+      p[j][i] ~ beta(lambda*pi[i], lambda*(1.0 - pi[i]));
     }
   }
 }
