@@ -49,14 +49,16 @@ transformed parameters {
       x[i,j][1] = (p[j][i]^2)*(1.0 - f) + f*p[j][i];
       x[i,j][2] = 2.0*p[j][i]*(1.0 - p[j][i])*(1-f);
       x[i,j][3] = ((1.0 - p[j][i])^2)*(1.0 - f) + f*(1.0 - p[j][i]);
-      // expected counts: smoothed away from [0, N[j,i]]
+      // expected counts
       //
-      n_exp_ct[i,j][1] = (x[i,j][1]/(x[i,j][1] + x[i,j][2]))*(n[j,i] + 1.0);
-      n_exp_ct[i,j][2] = (x[i,j][2]/(x[i,j][1] + x[i,j][2]))*(n[j,i] + 1.0);
-      n_exp_ct[i,j][3] = N[j,i] - n[j,i] + 1.0;
+      n_exp_ct[i,j][1] = (x[i,j][1]/(x[i,j][1] + x[i,j][2]))*n[j,i];
+      n_exp_ct[i,j][2] = (x[i,j][2]/(x[i,j][1] + x[i,j][2]))*n[j,i];
+      n_exp_ct[i,j][3] = N[j,i] - n[j,i];
       for (k in 1:3) {
-        n_exp[i,j][k] = n_exp_ct[i,j][k]/(N[j,i] + 2.0);
-        alpha[i,j][k] = (N[j,i] + 2.0)*x[i,j][k];
+        // smoothed away from (0,1) with flat Dirichlet prior
+        //
+        n_exp[i,j][k] = (n_exp_ct[i,j][k] + 1.0)/(N[j,i] + 3.0);
+        alpha[i,j][k] = N[j,i]*x[i,j][k];
       }
     }
   }
@@ -65,10 +67,7 @@ transformed parameters {
 model {
   // likelihood
   //
-  // NOTE: Jacobian adjustment is probably needed
-  // x[i,j][k] is a parameter
-  // n_exp[i,j][k] is a change of variables
-  //  for (i in 1:N_loci) {
+  for (i in 1:N_loci) {
     for (j in 1:N_pops) {
       n_exp[i,j] ~ dirichlet(alpha[i,j]);
     }
@@ -82,8 +81,7 @@ model {
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
       p[j][i] ~ beta(((1.0 - theta)/theta)*pi[i],
-                     ((1.0 - theta)/theta)*(1.0 - pi[i]));
+                    ((1.0 - theta)/theta)*(1.0 - pi[i]));
     }
   }
 }
-
