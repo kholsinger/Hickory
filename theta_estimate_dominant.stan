@@ -20,7 +20,6 @@ data {
 parameters {
   real logit_f;               // logit of f
   real logit_theta;           // logit of theta
-  real<lower=0.1> lambda;     //
   vector[N_loci] logit_pi;    // logit of pi
   // allele frequencies by locus & population
   //
@@ -34,8 +33,7 @@ transformed parameters {
   real<lower=0, upper=1> x[N_loci, N_pops]; // dominant phenotype frequencies
 
   f = inv_logit(logit_f);
-  // theta = inv_logit(logit_theta);
-  theta = 1.0/(1.0 + lambda);
+  theta = inv_logit(logit_theta);
   pi = inv_logit(logit_pi);
 
   for (i in 1:N_loci) {
@@ -60,12 +58,10 @@ model {
   logit_pi ~ normal(mu_pi, sd_pi);
   logit_f ~ normal(mu_f, sd_f);
   logit_theta ~ normal(mu_theta, sd_theta);
-  lambda ~ pareto(0.1, 1.5);
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-      // p[j][i] ~ beta(((1.0 - theta)/theta)*pi[i],
-      //               ((1.0 - theta)/theta)*(1.0 - pi[i]));
-      p[j][i] ~ beta(lambda*pi[i], lambda*(1.0 - pi[i]));
+      p[j][i] ~ beta(((1.0 - theta)/theta)*pi[i],
+                    ((1.0 - theta)/theta)*(1.0 - pi[i]));
     }
   }
 }
