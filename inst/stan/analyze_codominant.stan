@@ -65,3 +65,14 @@ model {
     }
   }
 }
+
+generated quantities {
+  real log_lik;
+
+  log_lik = 0.0;
+  for (i in 1:N_loci) {
+    for (j in 1:N_pops) {
+      log_lik += multinomial_lpmf(n[j,i] | x[i,j]);
+    }
+  }
+}

@@ -11,14 +11,14 @@
 ##
 *~
 
-## miscellaneous files to ignore
+## Ignore compiled files
 ##
-Read-and-delete-me
-*.zip
-kholsinger-Protea-repens-GBS*
+*.so
+*.o
+
+## Miscellaneous other files
+##
+notes.txt
 .DS_Store
 .#*
-*-str.*
-message_tmp.txt
-
 

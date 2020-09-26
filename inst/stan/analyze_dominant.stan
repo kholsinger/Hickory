@@ -49,7 +49,7 @@ model {
   //
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-      n[j,i] ~ binomial(n[j,i], x[i,j]);
+      n[j,i] ~ binomial(N[j,i], x[i,j]);
     }
   }
 
@@ -61,7 +61,18 @@ model {
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
       p[j][i] ~ beta(((1.0 - theta)/theta)*pi[i],
-                    ((1.0 - theta)/theta)*(1.0 - pi[i]));
+                     ((1.0 - theta)/theta)*(1.0 - pi[i]));
+    }
+  }
+}
+
+generated quantities {
+  real log_lik;
+
+  log_lik = 0.0;
+  for (i in 1:N_loci) {
+    for (j in 1:N_pops) {
+      log_lik += binomial_lpmf(n[j,i] | N[j,i], x[i,j]);
     }
   }
 }
