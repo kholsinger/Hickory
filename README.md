@@ -15,7 +15,7 @@ to work with data in most of the widely used formats.
 ### A note on requirements
 
 You will need to have a C/C++ compiler installed in order to use this
-package (for now).[^1] The (RStan Getting
+package (for now).<sup>1</sup> The (RStan Getting
 Started)[https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started]
 page has helpful information on getting your system configured. I'll
 help if I can, but I've been using Macs for nearly 10 years. I can
@@ -60,7 +60,7 @@ package is ready. Here's what I have in mind, in rough sequence.
 
 
 
-[^1]: Once I feel comfortable enough with this package to release it
+<sup>1</sup>Once I feel comfortable enough with this package to release it
     to CRAN, I believe that the build system there will produce the
     binaries for different platforms. I don't have the ability to do
     that myself.

@@ -2,6 +2,8 @@
 ##
 .Rproj.user
 *.Rproj
+.Rbuildignore
+.Rhistory
 
 ## Stan files to ignore
 ##
