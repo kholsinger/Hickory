@@ -3,9 +3,7 @@
 \name{set_priors}
 \alias{set_priors}
 \title{Put priors in global namespace so that they are available to
-\code{initialize_chains()}.
-NOTE: This needs to be changed so that they are restricted to
-the package namespace}
+\code{initialize_chains()}.}
 \usage{
 set_priors(prior_pi, prior_f, prior_theta, N_loci)
 }
@@ -24,6 +22,4 @@ None
 \description{
 Put priors in global namespace so that they are available to
 \code{initialize_chains()}.
-NOTE: This needs to be changed so that they are restricted to
-the package namespace
 }

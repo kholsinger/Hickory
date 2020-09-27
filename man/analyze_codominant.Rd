@@ -6,20 +6,20 @@
 \usage{
 analyze_codominant(
   genos,
-  prior_pi = list(mean = 0.5, upper = 0.9),
-  prior_f = list(mean = 0.1, upper = 0.2),
-  prior_theta = list(mean = 0.1, upper = 0.2),
+  prior_pi = list(lo = 0.1, upper = 0.9),
+  prior_f = list(lo = 0.01, upper = 0.2),
+  prior_theta = list(lo = 0.01, upper = 0.2),
   ...
 )
 }
 \arguments{
 \item{genos}{A list in the format returned by read_marker_data()}
 
-\item{prior_pi}{A vector specifying the mean and an upper limit on pi}
+\item{prior_pi}{A vector specifying lower and upper limits on pi}
 
-\item{prior_f}{A vector specifying the mean and an upper limit on f}
+\item{prior_f}{A vector specifying lower and upper limits on f}
 
-\item{prior_theta}{A vector specifying the mean and and upper limit on theta}
+\item{prior_theta}{A vector specifying lower and upper limits on theta}
 
 \item{...}{Optional arguments passed to \code{rstan::sampling()}}
 }

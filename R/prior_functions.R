@@ -2,9 +2,9 @@
 ##
 ## Note:: These will be overwritten by defaults in analyze_*()
 ##
-prior_pi <- list(mean = 0.5, upper = 0.9)
-prior_f <- list(mean = 0.1, upper = 0.2)
-prior_theta <- list(mean = 0.1, upper = 0.2)
+prior_pi <- list(lower = 0.1, upper = 0.9)
+prior_f <- list(lower = 0.01, upper = 0.2)
+prior_theta <- list(lower = 0.01, upper = 0.2)
 N_loci <- 5
 
 #' Calculate the logit of p
@@ -20,23 +20,25 @@ logit <- function(p) {
 #' Set mean and standard deviation on the logit scale given lower and upper
 #' bound
 #'
+#' mean = (upper + lower)/2
+#' sd = (upper - lower)/4
+#'
 #' @export
 #' @param prior A list with two components: mean and upper
 #' @return A vector with element 1 = mean and element 2 = sd
 #'
 logit_prior <- function(prior) {
-  mean <- logit(prior$mean)
+  lo <- logit(prior$lo)
   upper <- logit(prior$upper)
   ## set standard deviation as half of distance from mean to upper bound
   ##
-  sd <- (upper - mean)/2.0
-  return(c(mean, sd))
+  mean <- (upper + lo)/2.0
+  sd <- (upper - lo)/4.0
+  return(list(mu = mean, sd = sd))
 }
 
 #' Put priors in global namespace so that they are available to
 #' `initialize_chains()`.
-#' NOTE: This needs to be changed so that they are restricted to
-#' the package namespace
 #'
 #' @export
 #' @param prior_pi A vector with the mean and upper bound on pi
@@ -64,9 +66,9 @@ initialize_chains <- function() {
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
 
-  logit_pi <- rnorm(N_loci, logit_prior_pi[1], logit_prior_pi[2])
-  logit_f <- rnorm(1, logit_prior_f[1], logit_prior_f[2])
-  logit_theta <- rnorm(1, logit_prior_theta[1], logit_prior_theta[2])
+  logit_pi <- rnorm(N_loci, logit_prior_pi$mu, logit_prior_pi$sd)
+  logit_f <- rnorm(1, logit_prior_f$mu, logit_prior_f$sd)
+  logit_theta <- rnorm(1, logit_prior_theta$mu, logit_prior_theta$sd)
 
   list(logit_pi = logit_pi,
        logit_f = logit_f,

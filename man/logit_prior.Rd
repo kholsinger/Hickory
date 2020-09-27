@@ -14,6 +14,6 @@ logit_prior(prior)
 A vector with element 1 = mean and element 2 = sd
 }
 \description{
-Set mean and standard deviation on the logit scale given lower and upper
-bound
+mean = (upper + lower)/2
+sd = (upper - lower)/4
 }

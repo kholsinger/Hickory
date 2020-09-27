@@ -2,16 +2,16 @@
 #'
 #' @export
 #' @param genos A list in the format returned by read_marker_data()
-#' @param prior_pi A vector specifying the mean and an upper limit on pi
-#' @param prior_f A vector specifying the mean and an upper limit on f
-#' @param prior_theta A vector specifying the mean and and upper limit on theta
+#' @param prior_pi A vector specifying lower and upper limits on pi
+#' @param prior_f A vector specifying lower and upper limits on f
+#' @param prior_theta A vector specifying lower and upper limits on theta
 #' @param ... Optional arguments passed to `rstan::sampling()`
 #' @return An object of class `stanfit` returned by `rstan::sampling()`
 #'
 analyze_codominant <- function(genos,
-                               prior_pi = list(mean = 0.5, upper = 0.9),
-                               prior_f = list(mean = 0.1, upper = 0.2),
-                               prior_theta = list(mean = 0.1, upper = 0.2),
+                               prior_pi = list(lo = 0.1, upper = 0.9),
+                               prior_f = list(lo = 0.01, upper = 0.2),
+                               prior_theta = list(lo = 0.01, upper = 0.2),
                                ...)
 {
   set_priors(prior_pi = prior_pi,
@@ -24,12 +24,12 @@ analyze_codominant <- function(genos,
   stan_data <- list(N_loci = genos$N_loci,
                     N_pops = genos$N_pops,
                     n = genos$n,
-                    mu_pi = logit_prior_pi[1],
-                    sd_pi = logit_prior_pi[2],
-                    mu_f = logit_prior_f[1],
-                    sd_f = logit_prior_f[2],
-                    mu_theta = logit_prior_theta[1],
-                    sd_theta = logit_prior_theta[2])
+                    mu_pi = logit_prior_pi$mu,
+                    sd_pi = logit_prior_pi$sd,
+                    mu_f = logit_prior_f$mu,
+                    sd_f = logit_prior_f$sd,
+                    mu_theta = logit_prior_theta$mu,
+                    sd_theta = logit_prior_theta$sd)
   stan_pars <- c("f",
                  "theta",
                  "p",

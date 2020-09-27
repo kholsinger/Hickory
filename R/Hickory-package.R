@@ -16,6 +16,39 @@
 #' For dominant markers phenotypes are labeled 0 and 1, with 1 being the
 #' dominant phenotype, i.e., the presence of the marker.
 #'
+#' ## Setting priors
+#'
+#' The priors on the mean allele frequency across loci, f, and theta are
+#' set by specifying their means and standard deviations on the logit scale.
+#' To make it easier to think about them, they are specified by setting a
+#' lower and an upper bound. These roughly the central 95% interval for the
+#' prior probability of each of the parameters.
+#'
+#' For example, given `lo` and `upper` for one of these paramenters, the
+#' prior mean and prior standard deviation are set as follows
+#'
+#' ```
+#' mean = (upper + lo)/2.0
+#' sd <- (upper - lo)/4.0
+#' ```
+#'
+#' ## Checking convergence
+#'
+#' It's conceivable that you'll see a warning message that says something
+#' about Bayesian fraction missing information. If you do, let me know. I'd
+#' like to explore those data. You may be able to get rid of the warning by
+#' passing `control = list(adapt_delta = 0.9, max_treedepth = 20)` as a
+#' parameter to `analyze_codominant()` or `analyze_dominant()`.
+#'
+#' There's a good chance that you'll get a warning about the Bulk Effective
+#' Sample Size and/or the Tail Effective Sample Size being too low. If you do,
+#' take a look at the `n_eff` column in the output. Find the smallest one
+#' and increast the number of iterations from the default 2000 by a factor
+#' big enough to make the smallest `n_eff` comfortably bigger than 400. For
+#' example, if the smallest `n_eff` is 162, you need at least a factor of 3
+#' increase in the number of iterations. So pass `iter = 6000` to
+#' `analyze_codominant()`or `analyze_dominant()`.
+#'
 #' @docType package
 #' @name Hickory-package
 #' @aliases Hickory
