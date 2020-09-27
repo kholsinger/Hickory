@@ -28,12 +28,12 @@ logit <- function(p) {
 #' @return A vector with element 1 = mean and element 2 = sd
 #'
 logit_prior <- function(prior) {
-  lo <- logit(prior$lo)
+  lower <- logit(prior$lower)
   upper <- logit(prior$upper)
   ## set standard deviation as half of distance from mean to upper bound
   ##
-  mean <- (upper + lo)/2.0
-  sd <- (upper - lo)/4.0
+  mean <- (upper + lower)/2.0
+  sd <- (upper - lower)/4.0
   return(list(mu = mean, sd = sd))
 }
 

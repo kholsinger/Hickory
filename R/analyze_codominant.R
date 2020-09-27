@@ -9,9 +9,9 @@
 #' @return An object of class `stanfit` returned by `rstan::sampling()`
 #'
 analyze_codominant <- function(genos,
-                               prior_pi = list(lo = 0.1, upper = 0.9),
-                               prior_f = list(lo = 0.01, upper = 0.2),
-                               prior_theta = list(lo = 0.01, upper = 0.2),
+                               prior_pi = list(lower = 0.1, upper = 0.9),
+                               prior_f = list(lower = 0.01, upper = 0.2),
+                               prior_theta = list(lower = 0.01, upper = 0.2),
                                ...)
 {
   set_priors(prior_pi = prior_pi,

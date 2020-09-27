@@ -28,8 +28,8 @@
 #' prior mean and prior standard deviation are set as follows
 #'
 #' ```
-#' mean = (upper + lo)/2.0
-#' sd <- (upper - lo)/4.0
+#' mean = (logit(upper) + logit(lo))/2.0
+#' sd <- (logit(upper) - logit(lo))/4.0
 #' ```
 #'
 #' ## Checking convergence

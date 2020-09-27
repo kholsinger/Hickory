@@ -53,10 +53,11 @@ package is ready. Here's what I have in mind, in rough sequence.
    `loo` to provide ways to evaluate whether there is evidence for
    inbreeding and whether there is evidence for allele frequency
    differences among populations.
-2. Implement population- and locus-specific effects on $\theta$,
+2. Implement posterior predictive checks.
+3. Implement population- and locus-specific effects on $\theta$,
    including identification of potential outlier loci.
-3. Implement interface with `adegenet`.
-4. Implement multiallele version of `analyze_codominant()`.
+4. Implement interface with `adegenet`.
+5. Implement multiallele version of `analyze_codominant()`.
 
 
 

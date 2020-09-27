@@ -31,8 +31,8 @@ lower and an upper bound. These roughly the central 95\% interval for the
 prior probability of each of the parameters.
 
 For example, given \code{lo} and \code{upper} for one of these paramenters, the
-prior mean and prior standard deviation are set as follows\preformatted{mean = (upper + lo)/2.0
-sd <- (upper - lo)/4.0
+prior mean and prior standard deviation are set as follows\preformatted{mean = (logit(upper) + logit(lo))/2.0
+sd <- (logit(upper) - logit(lo))/4.0
 }
 }
 
