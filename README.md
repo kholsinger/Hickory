@@ -96,6 +96,7 @@ those estimates are likely to be reliable.
     to CRAN, I believe that the build system there will produce the
     binaries for different platforms. I don't have the ability to do
     that myself.
+    
 <sup>2</sup>Foll M, Beaumont MA, Gaggiotti O. 2000. An Approximate
     Bayesian Computation Approach to Overcome Biases That Arise When
     Using Amplified Fragment Length Polymorphism Markers to Study
