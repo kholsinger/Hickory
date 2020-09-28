@@ -33,7 +33,7 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_analyze_dominant");
-    reader.add_event(80, 78, "end", "model_analyze_dominant");
+    reader.add_event(84, 82, "end", "model_analyze_dominant");
     return reader;
 }
 #include <stan_meta_header.hpp>
@@ -50,6 +50,7 @@ private:
         double sd_f;
         double mu_theta;
         double sd_theta;
+        int f_zero;
 public:
     model_analyze_dominant(stan::io::var_context& context__,
         std::ostream* pstream__ = 0)
@@ -175,20 +176,28 @@ public:
             pos__ = 0;
             sd_theta = vals_r__[pos__++];
             check_greater_or_equal(function__, "sd_theta", sd_theta, 0);
+            current_statement_begin__ = 18;
+            context__.validate_dims("data initialization", "f_zero", "int", context__.to_vec());
+            f_zero = int(0);
+            vals_i__ = context__.vals_i("f_zero");
+            pos__ = 0;
+            f_zero = vals_i__[pos__++];
+            check_greater_or_equal(function__, "f_zero", f_zero, 0);
+            check_less_or_equal(function__, "f_zero", f_zero, 1);
             // initialize transformed data variables
             // execute transformed data statements
             // validate transformed data
             // validate, set parameter ranges
             num_params_r__ = 0U;
             param_ranges_i__.clear();
-            current_statement_begin__ = 21;
-            num_params_r__ += 1;
             current_statement_begin__ = 22;
             num_params_r__ += 1;
             current_statement_begin__ = 23;
+            num_params_r__ += 1;
+            current_statement_begin__ = 24;
             validate_non_negative_index("logit_pi", "N_loci", N_loci);
             num_params_r__ += N_loci;
-            current_statement_begin__ = 26;
+            current_statement_begin__ = 27;
             validate_non_negative_index("p", "N_loci", N_loci);
             validate_non_negative_index("p", "N_pops", N_pops);
             num_params_r__ += (N_loci * N_pops);
@@ -209,7 +218,7 @@ public:
         (void) pos__; // dummy call to supress warning
         std::vector<double> vals_r__;
         std::vector<int> vals_i__;
-        current_statement_begin__ = 21;
+        current_statement_begin__ = 22;
         if (!(context__.contains_r("logit_f")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable logit_f missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("logit_f");
@@ -222,7 +231,7 @@ public:
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable logit_f: ") + e.what()), current_statement_begin__, prog_reader__());
         }
-        current_statement_begin__ = 22;
+        current_statement_begin__ = 23;
         if (!(context__.contains_r("logit_theta")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable logit_theta missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("logit_theta");
@@ -235,7 +244,7 @@ public:
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable logit_theta: ") + e.what()), current_statement_begin__, prog_reader__());
         }
-        current_statement_begin__ = 23;
+        current_statement_begin__ = 24;
         if (!(context__.contains_r("logit_pi")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable logit_pi missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("logit_pi");
@@ -252,7 +261,7 @@ public:
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable logit_pi: ") + e.what()), current_statement_begin__, prog_reader__());
         }
-        current_statement_begin__ = 26;
+        current_statement_begin__ = 27;
         if (!(context__.contains_r("p")))
             stan::lang::rethrow_located(std::runtime_error(std::string("Variable p missing")), current_statement_begin__, prog_reader__());
         vals_r__ = context__.vals_r("p");
@@ -301,28 +310,28 @@ public:
         try {
             stan::io::reader<local_scalar_t__> in__(params_r__, params_i__);
             // model parameters
-            current_statement_begin__ = 21;
+            current_statement_begin__ = 22;
             local_scalar_t__ logit_f;
             (void) logit_f;  // dummy to suppress unused var warning
             if (jacobian__)
                 logit_f = in__.scalar_constrain(lp__);
             else
                 logit_f = in__.scalar_constrain();
-            current_statement_begin__ = 22;
+            current_statement_begin__ = 23;
             local_scalar_t__ logit_theta;
             (void) logit_theta;  // dummy to suppress unused var warning
             if (jacobian__)
                 logit_theta = in__.scalar_constrain(lp__);
             else
                 logit_theta = in__.scalar_constrain();
-            current_statement_begin__ = 23;
+            current_statement_begin__ = 24;
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> logit_pi;
             (void) logit_pi;  // dummy to suppress unused var warning
             if (jacobian__)
                 logit_pi = in__.vector_constrain(N_loci, lp__);
             else
                 logit_pi = in__.vector_constrain(N_loci);
-            current_statement_begin__ = 26;
+            current_statement_begin__ = 27;
             std::vector<Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> > p;
             size_t p_d_0_max__ = N_pops;
             p.reserve(p_d_0_max__);
@@ -333,39 +342,45 @@ public:
                     p.push_back(in__.vector_lub_constrain(0, 1, N_loci));
             }
             // transformed parameters
-            current_statement_begin__ = 30;
+            current_statement_begin__ = 31;
             local_scalar_t__ f;
             (void) f;  // dummy to suppress unused var warning
             stan::math::initialize(f, DUMMY_VAR__);
             stan::math::fill(f, DUMMY_VAR__);
-            current_statement_begin__ = 31;
+            current_statement_begin__ = 32;
             local_scalar_t__ theta;
             (void) theta;  // dummy to suppress unused var warning
             stan::math::initialize(theta, DUMMY_VAR__);
             stan::math::fill(theta, DUMMY_VAR__);
-            current_statement_begin__ = 32;
+            current_statement_begin__ = 33;
             validate_non_negative_index("pi", "N_loci", N_loci);
             Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> pi(N_loci);
             stan::math::initialize(pi, DUMMY_VAR__);
             stan::math::fill(pi, DUMMY_VAR__);
-            current_statement_begin__ = 33;
+            current_statement_begin__ = 34;
             validate_non_negative_index("x", "N_loci", N_loci);
             validate_non_negative_index("x", "N_pops", N_pops);
             std::vector<std::vector<local_scalar_t__> > x(N_loci, std::vector<local_scalar_t__>(N_pops, local_scalar_t__(0)));
             stan::math::initialize(x, DUMMY_VAR__);
             stan::math::fill(x, DUMMY_VAR__);
             // transformed parameters block statements
-            current_statement_begin__ = 35;
-            stan::math::assign(f, inv_logit(logit_f));
             current_statement_begin__ = 36;
+            if (as_bool(logical_eq(f_zero, 0))) {
+                current_statement_begin__ = 37;
+                stan::math::assign(f, inv_logit(logit_f));
+            } else {
+                current_statement_begin__ = 39;
+                stan::math::assign(f, 0.0);
+            }
+            current_statement_begin__ = 41;
             stan::math::assign(theta, inv_logit(logit_theta));
-            current_statement_begin__ = 37;
+            current_statement_begin__ = 42;
             stan::math::assign(pi, inv_logit(logit_pi));
-            current_statement_begin__ = 39;
+            current_statement_begin__ = 44;
             for (int i = 1; i <= N_loci; ++i) {
-                current_statement_begin__ = 40;
+                current_statement_begin__ = 45;
                 for (int j = 1; j <= N_pops; ++j) {
-                    current_statement_begin__ = 41;
+                    current_statement_begin__ = 46;
                     stan::model::assign(x, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_uni(j), stan::model::nil_index_list())), 
                                 (((pow(get_base1(get_base1(p, j, "p", 1), i, "p", 2), 2) * (1.0 - f)) + (f * get_base1(get_base1(p, j, "p", 1), i, "p", 2))) + (((2.0 * get_base1(get_base1(p, j, "p", 1), i, "p", 2)) * (1.0 - get_base1(get_base1(p, j, "p", 1), i, "p", 2))) * (1 - f))), 
@@ -375,7 +390,7 @@ public:
             // validate transformed parameters
             const char* function__ = "validate transformed params";
             (void) function__;  // dummy to suppress unused var warning
-            current_statement_begin__ = 30;
+            current_statement_begin__ = 31;
             if (stan::math::is_uninitialized(f)) {
                 std::stringstream msg__;
                 msg__ << "Undefined transformed parameter: f";
@@ -383,7 +398,7 @@ public:
             }
             check_greater_or_equal(function__, "f", f, 0);
             check_less_or_equal(function__, "f", f, 1);
-            current_statement_begin__ = 31;
+            current_statement_begin__ = 32;
             if (stan::math::is_uninitialized(theta)) {
                 std::stringstream msg__;
                 msg__ << "Undefined transformed parameter: theta";
@@ -391,7 +406,7 @@ public:
             }
             check_greater_or_equal(function__, "theta", theta, 0);
             check_less_or_equal(function__, "theta", theta, 1);
-            current_statement_begin__ = 32;
+            current_statement_begin__ = 33;
             size_t pi_j_1_max__ = N_loci;
             for (size_t j_1__ = 0; j_1__ < pi_j_1_max__; ++j_1__) {
                 if (stan::math::is_uninitialized(pi(j_1__))) {
@@ -402,7 +417,7 @@ public:
             }
             check_greater_or_equal(function__, "pi", pi, 0);
             check_less_or_equal(function__, "pi", pi, 1);
-            current_statement_begin__ = 33;
+            current_statement_begin__ = 34;
             size_t x_k_0_max__ = N_loci;
             size_t x_k_1_max__ = N_pops;
             for (size_t k_0__ = 0; k_0__ < x_k_0_max__; ++k_0__) {
@@ -423,25 +438,25 @@ public:
                 }
             }
             // model body
-            current_statement_begin__ = 50;
+            current_statement_begin__ = 55;
             for (int i = 1; i <= N_loci; ++i) {
-                current_statement_begin__ = 51;
+                current_statement_begin__ = 56;
                 for (int j = 1; j <= N_pops; ++j) {
-                    current_statement_begin__ = 52;
+                    current_statement_begin__ = 57;
                     lp_accum__.add(binomial_log<propto__>(get_base1(get_base1(n, j, "n", 1), i, "n", 2), get_base1(get_base1(N, j, "N", 1), i, "N", 2), get_base1(get_base1(x, i, "x", 1), j, "x", 2)));
                 }
             }
-            current_statement_begin__ = 58;
+            current_statement_begin__ = 63;
             lp_accum__.add(normal_log<propto__>(logit_pi, mu_pi, sd_pi));
-            current_statement_begin__ = 59;
+            current_statement_begin__ = 64;
             lp_accum__.add(normal_log<propto__>(logit_f, mu_f, sd_f));
-            current_statement_begin__ = 60;
+            current_statement_begin__ = 65;
             lp_accum__.add(normal_log<propto__>(logit_theta, mu_theta, sd_theta));
-            current_statement_begin__ = 61;
+            current_statement_begin__ = 66;
             for (int i = 1; i <= N_loci; ++i) {
-                current_statement_begin__ = 62;
+                current_statement_begin__ = 67;
                 for (int j = 1; j <= N_pops; ++j) {
-                    current_statement_begin__ = 63;
+                    current_statement_begin__ = 68;
                     lp_accum__.add(beta_log<propto__>(get_base1(get_base1(p, j, "p", 1), i, "p", 2), (((1.0 - theta) / theta) * get_base1(pi, i, "pi", 1)), (((1.0 - theta) / theta) * (1.0 - get_base1(pi, i, "pi", 1)))));
                 }
             }
@@ -501,6 +516,8 @@ public:
         dims__.push_back(N_pops);
         dimss__.push_back(dims__);
         dims__.resize(0);
+        dims__.push_back(N_pops);
+        dims__.push_back(N_loci);
         dimss__.push_back(dims__);
     }
     template <typename RNG>
@@ -547,39 +564,45 @@ public:
         if (!include_tparams__ && !include_gqs__) return;
         try {
             // declare and define transformed parameters
-            current_statement_begin__ = 30;
+            current_statement_begin__ = 31;
             double f;
             (void) f;  // dummy to suppress unused var warning
             stan::math::initialize(f, DUMMY_VAR__);
             stan::math::fill(f, DUMMY_VAR__);
-            current_statement_begin__ = 31;
+            current_statement_begin__ = 32;
             double theta;
             (void) theta;  // dummy to suppress unused var warning
             stan::math::initialize(theta, DUMMY_VAR__);
             stan::math::fill(theta, DUMMY_VAR__);
-            current_statement_begin__ = 32;
+            current_statement_begin__ = 33;
             validate_non_negative_index("pi", "N_loci", N_loci);
             Eigen::Matrix<double, Eigen::Dynamic, 1> pi(N_loci);
             stan::math::initialize(pi, DUMMY_VAR__);
             stan::math::fill(pi, DUMMY_VAR__);
-            current_statement_begin__ = 33;
+            current_statement_begin__ = 34;
             validate_non_negative_index("x", "N_loci", N_loci);
             validate_non_negative_index("x", "N_pops", N_pops);
             std::vector<std::vector<double> > x(N_loci, std::vector<double>(N_pops, double(0)));
             stan::math::initialize(x, DUMMY_VAR__);
             stan::math::fill(x, DUMMY_VAR__);
             // do transformed parameters statements
-            current_statement_begin__ = 35;
-            stan::math::assign(f, inv_logit(logit_f));
             current_statement_begin__ = 36;
+            if (as_bool(logical_eq(f_zero, 0))) {
+                current_statement_begin__ = 37;
+                stan::math::assign(f, inv_logit(logit_f));
+            } else {
+                current_statement_begin__ = 39;
+                stan::math::assign(f, 0.0);
+            }
+            current_statement_begin__ = 41;
             stan::math::assign(theta, inv_logit(logit_theta));
-            current_statement_begin__ = 37;
+            current_statement_begin__ = 42;
             stan::math::assign(pi, inv_logit(logit_pi));
-            current_statement_begin__ = 39;
+            current_statement_begin__ = 44;
             for (int i = 1; i <= N_loci; ++i) {
-                current_statement_begin__ = 40;
+                current_statement_begin__ = 45;
                 for (int j = 1; j <= N_pops; ++j) {
-                    current_statement_begin__ = 41;
+                    current_statement_begin__ = 46;
                     stan::model::assign(x, 
                                 stan::model::cons_list(stan::model::index_uni(i), stan::model::cons_list(stan::model::index_uni(j), stan::model::nil_index_list())), 
                                 (((pow(get_base1(get_base1(p, j, "p", 1), i, "p", 2), 2) * (1.0 - f)) + (f * get_base1(get_base1(p, j, "p", 1), i, "p", 2))) + (((2.0 * get_base1(get_base1(p, j, "p", 1), i, "p", 2)) * (1.0 - get_base1(get_base1(p, j, "p", 1), i, "p", 2))) * (1 - f))), 
@@ -590,16 +613,16 @@ public:
             // validate transformed parameters
             const char* function__ = "validate transformed params";
             (void) function__;  // dummy to suppress unused var warning
-            current_statement_begin__ = 30;
+            current_statement_begin__ = 31;
             check_greater_or_equal(function__, "f", f, 0);
             check_less_or_equal(function__, "f", f, 1);
-            current_statement_begin__ = 31;
+            current_statement_begin__ = 32;
             check_greater_or_equal(function__, "theta", theta, 0);
             check_less_or_equal(function__, "theta", theta, 1);
-            current_statement_begin__ = 32;
+            current_statement_begin__ = 33;
             check_greater_or_equal(function__, "pi", pi, 0);
             check_less_or_equal(function__, "pi", pi, 1);
-            current_statement_begin__ = 33;
+            current_statement_begin__ = 34;
             size_t x_i_0_max__ = N_loci;
             size_t x_i_1_max__ = N_pops;
             for (size_t i_0__ = 0; i_0__ < x_i_0_max__; ++i_0__) {
@@ -626,25 +649,33 @@ public:
             }
             if (!include_gqs__) return;
             // declare and define generated quantities
-            current_statement_begin__ = 70;
-            double log_lik;
-            (void) log_lik;  // dummy to suppress unused var warning
+            current_statement_begin__ = 75;
+            validate_non_negative_index("log_lik", "N_pops", N_pops);
+            validate_non_negative_index("log_lik", "N_loci", N_loci);
+            std::vector<std::vector<double> > log_lik(N_pops, std::vector<double>(N_loci, double(0)));
             stan::math::initialize(log_lik, DUMMY_VAR__);
             stan::math::fill(log_lik, DUMMY_VAR__);
             // generated quantities statements
-            current_statement_begin__ = 72;
-            stan::math::assign(log_lik, 0.0);
-            current_statement_begin__ = 73;
+            current_statement_begin__ = 77;
             for (int i = 1; i <= N_loci; ++i) {
-                current_statement_begin__ = 74;
+                current_statement_begin__ = 78;
                 for (int j = 1; j <= N_pops; ++j) {
-                    current_statement_begin__ = 75;
-                    stan::math::assign(log_lik, (log_lik + binomial_log(get_base1(get_base1(n, j, "n", 1), i, "n", 2), get_base1(get_base1(N, j, "N", 1), i, "N", 2), get_base1(get_base1(x, i, "x", 1), j, "x", 2))));
+                    current_statement_begin__ = 79;
+                    stan::model::assign(log_lik, 
+                                stan::model::cons_list(stan::model::index_uni(j), stan::model::cons_list(stan::model::index_uni(i), stan::model::nil_index_list())), 
+                                binomial_log(get_base1(get_base1(n, j, "n", 1), i, "n", 2), get_base1(get_base1(N, j, "N", 1), i, "N", 2), get_base1(get_base1(x, i, "x", 1), j, "x", 2)), 
+                                "assigning variable log_lik");
                 }
             }
             // validate, write generated quantities
-            current_statement_begin__ = 70;
-            vars__.push_back(log_lik);
+            current_statement_begin__ = 75;
+            size_t log_lik_k_0_max__ = N_pops;
+            size_t log_lik_k_1_max__ = N_loci;
+            for (size_t k_1__ = 0; k_1__ < log_lik_k_1_max__; ++k_1__) {
+                for (size_t k_0__ = 0; k_0__ < log_lik_k_0_max__; ++k_0__) {
+                    vars__.push_back(log_lik[k_0__][k_1__]);
+                }
+            }
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
             // Next line prevents compiler griping about no return
@@ -721,9 +752,15 @@ public:
             }
         }
         if (!include_gqs__) return;
-        param_name_stream__.str(std::string());
-        param_name_stream__ << "log_lik";
-        param_names__.push_back(param_name_stream__.str());
+        size_t log_lik_k_0_max__ = N_pops;
+        size_t log_lik_k_1_max__ = N_loci;
+        for (size_t k_1__ = 0; k_1__ < log_lik_k_1_max__; ++k_1__) {
+            for (size_t k_0__ = 0; k_0__ < log_lik_k_0_max__; ++k_0__) {
+                param_name_stream__.str(std::string());
+                param_name_stream__ << "log_lik" << '.' << k_0__ + 1 << '.' << k_1__ + 1;
+                param_names__.push_back(param_name_stream__.str());
+            }
+        }
     }
     void unconstrained_param_names(std::vector<std::string>& param_names__,
                                    bool include_tparams__ = true,
@@ -775,9 +812,15 @@ public:
             }
         }
         if (!include_gqs__) return;
-        param_name_stream__.str(std::string());
-        param_name_stream__ << "log_lik";
-        param_names__.push_back(param_name_stream__.str());
+        size_t log_lik_k_0_max__ = N_pops;
+        size_t log_lik_k_1_max__ = N_loci;
+        for (size_t k_1__ = 0; k_1__ < log_lik_k_1_max__; ++k_1__) {
+            for (size_t k_0__ = 0; k_0__ < log_lik_k_0_max__; ++k_0__) {
+                param_name_stream__.str(std::string());
+                param_name_stream__ << "log_lik" << '.' << k_0__ + 1 << '.' << k_1__ + 1;
+                param_names__.push_back(param_name_stream__.str());
+            }
+        }
     }
 }; // model
 }  // namespace

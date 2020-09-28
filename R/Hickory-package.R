@@ -54,7 +54,7 @@
 #' @aliases Hickory
 #' @useDynLib Hickory, .registration = TRUE
 #' @import methods
-#' @import tidyverse
+#' @import readr
 #' @import bayesplot
 #' @importFrom rstan sampling
 #'

@@ -9,6 +9,7 @@ analyze_codominant(
   prior_pi = list(lower = 0.1, upper = 0.9),
   prior_f = list(lower = 0.01, upper = 0.2),
   prior_theta = list(lower = 0.01, upper = 0.2),
+  f_zero = FALSE,
   ...
 )
 }
@@ -20,6 +21,8 @@ analyze_codominant(
 \item{prior_f}{A vector specifying lower and upper limits on f}
 
 \item{prior_theta}{A vector specifying lower and upper limits on theta}
+
+\item{f_zero}{TRUE for f = 0 model}
 
 \item{...}{Optional arguments passed to \code{rstan::sampling()}}
 }

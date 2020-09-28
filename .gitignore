@@ -8,6 +8,8 @@
 ## Stan files to ignore
 ##
 *.rds
+src/stanExports*
+src/RcppExports*
 
 ## Emacs files to ignore
 ##

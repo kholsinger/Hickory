@@ -14,6 +14,7 @@ data {
   real<lower=0> sd_f;         // sd of logit(f)
   real mu_theta;              // logit of mean(theta)
   real<lower=0> sd_theta;     // sd of logit(theta)
+  int<lower=0, upper=1> f_zero;  // 0 = estimate f, 1 = fix it to 0
 }
 
 parameters {
@@ -31,7 +32,11 @@ transformed parameters {
   vector<lower=0, upper=1>[N_loci] pi;  // mean allele frequencies
   vector<lower=0, upper=1>[3] x[N_loci, N_pops]; // vector of geno frequencies
 
-  f = inv_logit(logit_f);
+  if (f_zero == 0) {
+    f = inv_logit(logit_f);
+  } else {
+    f = 0.0;
+  }
   theta = inv_logit(logit_theta);
   pi = inv_logit(logit_pi);
 
@@ -67,12 +72,11 @@ model {
 }
 
 generated quantities {
-  real log_lik;
+  real log_lik[N_pops, N_loci]; 
 
-  log_lik = 0.0;
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-      log_lik += multinomial_lpmf(n[j,i] | x[i,j]);
+      log_lik[j,i] = multinomial_lpmf(n[j,i] | x[i,j]);
     }
   }
 }
