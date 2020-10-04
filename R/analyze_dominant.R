@@ -34,21 +34,15 @@ analyze_dominant <- function(genos,
                     mu_theta = logit_prior_theta$mu,
                     sd_theta = logit_prior_theta$sd,
                     f_zero = f_zero)
-  stan_pars <- c("f",
-                 "theta",
-                 "p",
-                 "pi",
-                 "log_lik")
   fit <- rstan::sampling(stanmodels$analyze_dominant,
                          data = stan_data,
-                         pars = stan_pars,
                          init = initialize_chains,
                          ...)
   print(fit, pars = c("f", "theta", "lp__"), digits_summary = 3)
   color_scheme_set("brightblue")
   suppressMessages(
     p <- bayesplot::mcmc_intervals(fit, pars = c("f", "theta")) +
-      scale_y_discrete(labels = c("f", expression(theta))) +
+      ggplot2::scale_y_discrete(labels = c("f", expression(theta))) +
       xaxis_text(size = 16, family = "sans") +
       yaxis_text(size = 16, family = "sans")
   )

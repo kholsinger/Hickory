@@ -72,11 +72,11 @@ model {
 }
 
 generated quantities {
-  real log_lik[N_pops, N_loci]; 
+  vector[N_pops*N_loci] log_lik; 
 
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-      log_lik[j,i] = binomial_lpmf(n[j,i] | N[j,i], x[i,j]);
+      log_lik[(i-1)*N_pops + j] = binomial_lpmf(n[j,i] | N[j,i], x[i,j]);
     }
   }
 }

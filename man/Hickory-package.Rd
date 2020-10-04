@@ -57,13 +57,39 @@ increase in the number of iterations. So pass \code{iter = 6000} to
 \examples{
 
 genos <- read_marker_data(system.file("extdata", "protea_repens.csv", package = "Hickory"))
-fit_cod <- analyze_codominant(genos)
+fit_free <- analyze_codominant(genos)
+fit_f0 <- analyze_codominant(genos, f_zero = TRUE)
+## compare the models using leave-one-out cross validation
+##
+## NOTE: The Pareto k diagnostics are something to worry about. The model
+## comparisons may not be reliable. Don't trust them unless the difference
+## in elpd_loo is much greater than twice its standard error
+##
+loo_free <- loo(fit_free)
+loo_f0 <- loo(fit_f0)
+## model1 in the output is the first model listed, i.e. the model where
+## theta is estimated from the data
+##
+compare(loo_free, loo_f0)
 ## save the example file to disk
 ##
 write.csv(genos, file = "protea_repens.csv", row.names = FALSE)
 
 genos <- read_marker_data(system.file("extdata", "dominant_example.csv", package = "Hickory"))
-fit_dom <- analyze_dominant(genos)
+fit_free <- analyze_dominant(genos)
+fit_f0 <- analyze_dominant(genos, f_zero = TRUE)
+## compare the models using leave-one-out cross validation
+##
+## NOTE: The Pareto k diagnostics are something to worry about. The model
+## comparisons may not be reliable. Don't trust them unless the difference
+## in elpd_loo is much greater than twice its standard error
+##
+loo_free <- loo(fit_free)
+loo_f0 <- loo(fit_f0)
+## model1 in the output is the first model listed, i.e. the model where
+## theta is estimated from the data
+##
+compare(loo_free, loo_f0)
 ## save the example file to disk
 ##
 write.csv(genos, file = "dominant_example.csv", row.names = FALSE)

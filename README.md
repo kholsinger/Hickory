@@ -51,7 +51,8 @@ devtools::install_github("kholsinger/Hickory")
 ### Roadmap
 
 There are a lot of improvements that I need to make before this
-package is ready. Here's what I have in mind, in rough sequence.
+package is ready for release on CRAN. Here's what I have in mind, in
+rough sequence. 
 
 1. Implement <img
    src="https://render.githubusercontent.com/render/math?math=f=0">
@@ -62,6 +63,10 @@ package is ready. Here's what I have in mind, in rough sequence.
    `loo` to provide ways to evaluate whether there is evidence for
    inbreeding and whether there is evidence for allele frequency
    differences among populations.
+	a. <img
+   src="https://render.githubusercontent.com/render/math?math=f=0"> is
+   implemented along with leave-one-out cross validation for model
+   comparison. 
 2. Implement posterior predictive checks.
 3. Investigate possible biases in dominant marker estimates (see
    below). 
