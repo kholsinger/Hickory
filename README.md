@@ -63,6 +63,7 @@ rough sequence.
    `loo` to provide ways to evaluate whether there is evidence for
    inbreeding and whether there is evidence for allele frequency
    differences among populations.
+   
 	a. <img
    src="https://render.githubusercontent.com/render/math?math=f=0"> is
    implemented along with leave-one-out cross validation for model
