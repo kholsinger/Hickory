@@ -1,0 +1,126 @@
+---
+title: "Hickory"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Hickory}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo = FALSE}
+library(Hickory)
+library(readr)
+
+## From https://roxygen2.r-lib.org/articles/rd-formatting.html
+##
+tabular <- function(df, ...) {
+  stopifnot(is.data.frame(df))
+
+  align <- function(x) if (is.numeric(x)) "r" else "l"
+  col_align <- purrr::map_chr(df, align)
+
+  cols <- lapply(df, format, ...)
+  contents <- do.call("paste",
+    c(cols, list(sep = " \\tab ", collapse = "\\cr\n#'   ")))
+
+  paste("#' \\tabular{", paste(col_align, collapse = ""), "}{\n#'   ",
+    paste0("\\strong{", names(df), "}", sep = "", collapse = " \\tab "), " \\cr\n#'   ",
+    contents, "\n#' }\n", sep = "")
+}
+```
+
+Hickory is a package for analysis of genetic structure in hierarchically structured populations using Wright's $F$-statistics. It allows analysis of both dominant marker data and co-dominant marker data. If you are interested in understanding the statistical model, you'll find a brief description below along with references to papers where the model is described in more detail.
+
+## Getting data into Hickory
+
+In a future release I plan to include an interface to `adegenet`, which will allow data from a variety of widely used formats to be used with `Hickory`. For now `Hickory` reads data from a simple CSV file with each individual for whom data is available on rows and with the collection locality in a column labeled `pop` indicating the and with the remaining columns corresponding to the loci for which data are available. The locus columns can have any name that is legal in a `data.frame` or `tibble`.
+
+### Co-dominant marker data
+
+`Hickory` is currently limited to analyzing data with only two alleles per locus. For convenience, think of them as $A_1$ and $A_2$. The entry in row $i$ and column $j$ of the CSV file will be the number of $A_1$ alleles in individual $i$ at locus $j$. Use `.` for missing data. Here's a small extract from `protea_repens.csv`, which is included as an example (see below).
+
+```{r, echo = FALSE}
+dat <- read_csv(system.file("extdata", "protea_repens.csv", package = "Hickory"),
+                col_types = cols())
+knitr::kable(dat[c(1:5, 25:30), 1:10])
+```
+
+Until I write the code necessary to remove the two allele restriction, you'll have to group multiallelic data into just two allelic classes. For example, you might designate the most common microsatellite variant as $A_1$ and every other allele as $A_2$. If you do this, I recommend that you try at least a couple of different ways of grouping the alleles. If allelic differences are neutral and if mutation contributes little to the pattern of variation, you should obtain similar estimates from different groupings. If you don't, it may indicate that some of the allelic differences are related to differences in fitness or that mutational processes are contributing to diversity in ways that affect the pattern of differentiation.
+
+### Dominant marker data
+
+Dominant marker data follows the same pattern, with `1` meaning the marker is present and `0` meaning it is absent. Here's a small extract from `dominant_example.csv`.
+
+```{r, echo = FALSE}
+dat <- read_csv(system.file("extdata", "dominant_example.csv", package = "Hickory"),
+                col_types = cols())
+knitr::kable(dat[c(1:5, 25:30), 1:10])
+```
+
+## Analysis of co-dominant marker data
+
+Analysis of co-dominant marker data consists of two steps: 
+
+1. Read the data into `R`.
+2. Analyze the data.
+
+If you have a fairly modern computer with multiple cores and a reasonable amount of memory, I recommend including the `options(mc.cores = parallel::detectCores())`. This will allow the four chains to run simultaneously and reduce the total running time by about a factor of four. You only need to do this once per session.
+
+```{r}
+options(mc.cores = parallel::detectCores())
+
+genos <- read_marker_data(system.file("extdata", "protea_repens.csv", package = "Hickory"))
+fit_free <- analyze_codominant(genos)
+```
+
+You can see at the top of the output that the analysis is based on four chains, each of which had 2000 iterations. There were 1000 warmup iterations that are not incldued in the summary statistics, meaning that the summary statistics are based on a total of 4000 samples from the posterior (4 chains x 1000 iterations per chain). 
+
+### Interpreting the output
+
+The table of numbers summarizes results of the analysis. `f` is an estimate of the within-population inbreeding coefficient, Wright's $F_{IS}$. `theta` is an estimate of the variance in allele frequencies relative to its maximum possible value, Wright's $F_{ST}$. Here's what the columns mean:
+
+\itemize{
+  \item `mean`: the posterior mean of the parameter
+  \item `se_mean`: the standard error of the posterior mean estimate
+  \item `sd`: the posterior standard deviation of the parameter
+  \item quantiles: the 2.5%, 25%, 50%, 75%, and 97.5% quantiles of the posterior distribution
+  \item `n_eff`: the "effective" number of samples in the posterior
+  \item `Rhat`: one measure of whether the samples converged to the same posterior
+}
+
+In this case the posterior mean of  `f` is very samll, 0.005, and the 95% credible interval is (0.002, 0.010), indicating that these data provide very little evidence for inbreeding within populations. The posterior mean of `theta` is relatively small for plants, 0.081, and the 95% credible interval is (0.066, 0.097), indicating a low-moderate amount of differentiation among populations.
+
+In both cases the number of effective samples is relatively large and `Rhat` is close to 1.0, indicating that the chains have converged and that the posterior estimates are reliable. `rstan`, which provides the interface between `R` and `Stan`, also does some additional convergence checks. If you don't get any warnings, as we didn't here, you have good reason to trust the results.
+
+## Analysis of dominant marker data
+
+Analysis of dominant marker data consists of the same two two steps: 
+
+1. Read the data into `R`.
+2. Analyze the data.
+
+The only difference is that we call `analyze_dominant()` instead of `analyze_codominant()`.
+
+```{r}
+options(mc.cores = parallel::detectCores())
+
+genos <- read_marker_data(system.file("extdata", "dominant_example.csv", package = "Hickory"))
+fit_free <- analyze_dominant(genos)
+```
+
+### Interpreting the output
+
+Output from this analysis is interpreted in the same way as before. In this case, the posterior mean of `f` is moderate 0.10 and its 95% credible interval is very broad (0.014, 0.304). This shouldn't be surprising. There is very little information about within-population inbreeding from dominant markers. The estimate of `theta` is similar to what it was with co-dominant marker data: 0.084 (0.067, 0.105). Notice that the effective sample sizes are a bit smaller and the `Rhat` are not quite as close to 1, but they are still acceptable.
+
+## A note on this implementation
+
+The original version of Hickory was written in C++ with the help of Paul Lewis. It was available only for Windows, and it became very difficult to maintain. In fact, I stopped maintaining it in 2008 or 2009, although I managed to cobble together a working version for a couple of people who asked. Finally, in 2020 I decided to rewrite it completely in `R` and `Stan`. `Stan` is a "state-of-the-art platform for statistical modeling and high-performance statistical computation."[^1] It uses Hamiltonian Monte Carlo instead of the simple Metropolis-Hastings Markov Chain Monte Carlo in the C++ version. Running it through `R` also provides immediate access to a wide variety of diagnostic tools for evaluating convergence of sampling chains, for visualizing the results, and for model comparison.
+
+[^1]: https://mc-stan.org/

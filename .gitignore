@@ -26,3 +26,6 @@ notes.txt
 .DS_Store
 .#*
 
+inst/doc
+doc
+Meta
