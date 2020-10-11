@@ -91,7 +91,8 @@ rough sequence.
 2. Implement posterior predictive checks.
 3. Investigate possible biases in dominant marker estimates (see
    below). 
-4. Implement population- and locus-specific effects on $\theta$,
+4. Implement population- and locus-specific effects on <img
+   src="https://render.githubusercontent.com/render/math?math=\theta">,
    including identification of potential outlier loci.
 5. Implement interface with `adegenet`.
 6. Implement multiallele version of `analyze_codominant()`.

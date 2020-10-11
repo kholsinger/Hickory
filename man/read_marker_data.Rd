@@ -11,10 +11,12 @@ read_marker_data(filename)
 }
 \value{
 A list with components
-N_pops for the number of populations in the sample
-N_loci for the number of genotypes in the sample
-n A N_pops x N_loci x 3 array of genotype counts
-N A N_pops x N_loci matrix of sample sizes
+\itemize{
+\item N_pops for the number of populations in the sample
+\item N_loci for the number of genotypes in the sample
+\item n A N_pops x N_loci x 3 array of genotype counts
+\item N A N_pops x N_loci matrix of sample sizes
+}
 }
 \description{
 Read marker data from a CSV file

@@ -40,7 +40,7 @@ Hickory is a package for analysis of genetic structure in hierarchically structu
 
 ## Getting data into Hickory
 
-In a future release I plan to include an interface to `adegenet`, which will allow data from a variety of widely used formats to be used with `Hickory`. For now `Hickory` reads data from a simple CSV file with each individual for whom data is available on rows and with the collection locality in a column labeled `pop` indicating the and with the remaining columns corresponding to the loci for which data are available. The locus columns can have any name that is legal in a `data.frame` or `tibble`.
+In a future release I plan to include an interface to `adegenet`, which will allow data from a variety of widely used formats to be used with `Hickory`. For now `Hickory` reads data from a simple CSV file with individuals rows and with the collection locality in a column labeled `pop` and with the remaining columns corresponding to the loci for which data are available. The locus columns can have any name that is legal in a `data.frame` or `tibble`.
 
 ### Co-dominant marker data
 
@@ -76,8 +76,19 @@ If you have a fairly modern computer with multiple cores and a reasonable amount
 ```{r}
 options(mc.cores = parallel::detectCores())
 
+## set the random number seed to ensure reproducible results
+##
+set.seed(1234)
 genos <- read_marker_data(system.file("extdata", "protea_repens.csv", package = "Hickory"))
 fit_free <- analyze_codominant(genos)
+```
+```{r echo = FALSE}
+f <- rstan::extract(fit_free)$f
+theta <- rstan::extract(fit_free)$theta
+mu_f <- round(mean(f), 3)
+mu_theta <- round(mean(theta), 3)
+f_int <- round(quantile(f, c(0.025, 0.975)), 3)
+theta_int <- round(quantile(theta, c(0.025, 0.975)), 3)
 ```
 
 You can see at the top of the output that the analysis is based on four chains, each of which had 2000 iterations. There were 1000 warmup iterations that are not incldued in the summary statistics, meaning that the summary statistics are based on a total of 4000 samples from the posterior (4 chains x 1000 iterations per chain). 
@@ -95,7 +106,7 @@ The table of numbers summarizes results of the analysis. `f` is an estimate of t
   \item `Rhat`: one measure of whether the samples converged to the same posterior
 }
 
-In this case the posterior mean of  `f` is very samll, 0.005, and the 95% credible interval is (0.002, 0.010), indicating that these data provide very little evidence for inbreeding within populations. The posterior mean of `theta` is relatively small for plants, 0.081, and the 95% credible interval is (0.066, 0.097), indicating a low-moderate amount of differentiation among populations.
+In this case the posterior mean of  `f` is very samll, `r mu_f`, and the 95% credible interval is (`r f_int[1]`, `r f_int[2]`), indicating that these data provide very little evidence for inbreeding within populations. The posterior mean of `theta` is relatively small for plants, `r mu_theta`, and the 95% credible interval is (`r theta_int[1]`, `r theta_int[2]`), indicating a low-moderate amount of differentiation among populations.
 
 In both cases the number of effective samples is relatively large and `Rhat` is close to 1.0, indicating that the chains have converged and that the posterior estimates are reliable. `rstan`, which provides the interface between `R` and `Stan`, also does some additional convergence checks. If you don't get any warnings, as we didn't here, you have good reason to trust the results.
 
@@ -111,13 +122,24 @@ The only difference is that we call `analyze_dominant()` instead of `analyze_cod
 ```{r}
 options(mc.cores = parallel::detectCores())
 
+## set the random number seed to ensure reproducible results
+##
+set.seed(1234)
 genos <- read_marker_data(system.file("extdata", "dominant_example.csv", package = "Hickory"))
 fit_free <- analyze_dominant(genos)
+```
+```{r echo = FALSE}
+f <- rstan::extract(fit_free)$f
+theta <- rstan::extract(fit_free)$theta
+mu_f <- round(mean(f), 3)
+mu_theta <- round(mean(theta), 3)
+f_int <- round(quantile(f, c(0.025, 0.975)), 3)
+theta_int <- round(quantile(theta, c(0.025, 0.975)), 3)
 ```
 
 ### Interpreting the output
 
-Output from this analysis is interpreted in the same way as before. In this case, the posterior mean of `f` is moderate 0.10 and its 95% credible interval is very broad (0.014, 0.304). This shouldn't be surprising. There is very little information about within-population inbreeding from dominant markers. The estimate of `theta` is similar to what it was with co-dominant marker data: 0.084 (0.067, 0.105). Notice that the effective sample sizes are a bit smaller and the `Rhat` are not quite as close to 1, but they are still acceptable.
+Output from this analysis is interpreted in the same way as before. In this case, the posterior mean of `f` is moderate, `r mu_f`, and its 95% credible interval is very broad (`r f_int[1]`, `r f_int[2]`). This shouldn't be surprising. There is very little information about within-population inbreeding from dominant markers. The estimate of `theta` is similar to what it was with co-dominant marker data: `r mu_theta` (`r theta_int[1]`, `r theta_int[2]`). Notice that the effective sample sizes are a bit smaller and the `Rhat` are not quite as close to 1, but they are still acceptable.
 
 ## A note on this implementation
 

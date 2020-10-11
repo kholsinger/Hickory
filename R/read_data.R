@@ -19,10 +19,10 @@ count_genos <- function(x) {
 #' @export
 #' @param filename Full path name to a CSV file containing marker data
 #' @return A list with components
-#' N_pops for the number of populations in the sample
-#' N_loci for the number of genotypes in the sample
-#' n A N_pops x N_loci x 3 array of genotype counts
-#' N A N_pops x N_loci matrix of sample sizes
+#' - N_pops for the number of populations in the sample
+#' - N_loci for the number of genotypes in the sample
+#' - n A N_pops x N_loci x 3 array of genotype counts
+#' - N A N_pops x N_loci matrix of sample sizes
 #'
 read_marker_data <- function(filename) {
   markers <- readr::read_csv(filename, na = ".", col_types = readr::cols())

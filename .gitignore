@@ -25,6 +25,6 @@ src/RcppExports*
 notes.txt
 .DS_Store
 .#*
-
 inst/doc
 Meta
+vignettes/figure

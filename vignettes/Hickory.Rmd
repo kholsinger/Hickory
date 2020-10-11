@@ -40,7 +40,7 @@ Hickory is a package for analysis of genetic structure in hierarchically structu
 
 ## Getting data into Hickory
 
-In a future release I plan to include an interface to `adegenet`, which will allow data from a variety of widely used formats to be used with `Hickory`. For now `Hickory` reads data from a simple CSV file with each individual for whom data is available on rows and with the collection locality in a column labeled `pop` indicating the and with the remaining columns corresponding to the loci for which data are available. The locus columns can have any name that is legal in a `data.frame` or `tibble`.
+In a future release I plan to include an interface to `adegenet`, which will allow data from a variety of widely used formats to be used with `Hickory`. For now `Hickory` reads data from a simple CSV file with individuals rows and with the collection locality in a column labeled `pop` and with the remaining columns corresponding to the loci for which data are available. The locus columns can have any name that is legal in a `data.frame` or `tibble`.
 
 ### Co-dominant marker data
 
