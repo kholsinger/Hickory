@@ -61,6 +61,13 @@ The installation will take longer, but you'll be able to run
 available. If you'd prefer, you can simply look at the vignettes in
 the `doc` directory here: 
 
+https://github.com/kholsinger/Hickory/tree/master/doc
+
+You'll probably be interested only in the HTML files in this
+directory. The Rmd file is the
+(https://rmarkdown.rstudio.com/)[rmarkdown] file that produced the
+HTML. The R file is the R code that's extracted from the Rmd file.
+
 ### Roadmap
 
 There are a lot of improvements that I need to make before this
