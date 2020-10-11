@@ -48,6 +48,19 @@ install.packages("bayesplot", "rstan", "tidyverse")
 devtools::install_github("kholsinger/Hickory")
 ```
 
+If you also want to install vignettes illustrating how to use
+`Hickory` in more detail, you'll want to change that second line to
+
+```
+devtools::install_github("kholsinger/Hickory", build_vignettes = TRUE)
+```
+
+The installation will take longer, but you'll be able to run
+`vignette("Hickory")` to get an overview, and
+`browseVignettes("Hickory")` to see all of the vignettes that are
+available. If you'd prefer, you can simply look at the vignettes in
+the `doc` directory here: 
+
 ### Roadmap
 
 There are a lot of improvements that I need to make before this
