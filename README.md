@@ -65,7 +65,7 @@ https://github.com/kholsinger/Hickory/tree/master/doc
 
 You'll probably be interested only in the HTML files in this
 directory. The Rmd file is the
-(https://rmarkdown.rstudio.com/)[rmarkdown] file that produced the
+[rmarkdown](https://rmarkdown.rstudio.com/) file that produced the
 HTML. The R file is the R code that's extracted from the Rmd file.
 
 ### Roadmap
