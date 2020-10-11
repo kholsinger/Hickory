@@ -20,7 +20,7 @@ to work with data in most of the widely used formats.
 
 You will need to have a C/C++ compiler installed in order to use this
 package (for now).<sup>1</sup> The
-[https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started](RStan Getting Started) page has helpful information on getting your system
+[RStan Getting Started](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started) page has helpful information on getting your system
 configured. I'll help if I can, but I've been using Macs for nearly 10
 years. I can probably help with Mac or Linux problems, but I may not
 be much help with Windows. If you've managed to install other R
@@ -63,9 +63,13 @@ the `doc` directory here:
 [https://github.com/kholsinger/Hickory/tree/master/doc](https://github.com/kholsinger/Hickory/tree/master/doc)
 
 You'll probably be interested only in the HTML files in this
-directory. The Rmd file is the
-[rmarkdown](https://rmarkdown.rstudio.com/) file that produced the
-HTML. The R file is the R code that's extracted from the Rmd file.
+directory. To view them, you'll need to hit the "Raw" button on the
+upper right of where the HTML code is displayed, save the file on you
+computer, and open it from your computer.
+
+The Rmd file is the [rmarkdown](https://rmarkdown.rstudio.com/) file
+that produced the HTML. The R file is R code that's extracted from
+the Rmd file.
 
 ### Roadmap
 
