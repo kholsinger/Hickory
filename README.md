@@ -82,12 +82,8 @@ rough sequence.
    models with model comparison using 
    `loo` to provide ways to evaluate whether there is evidence for
    inbreeding and whether there is evidence for allele frequency
-   differences among populations.
+   differences among populations. ***DONE***
    
-	a. <img
-   src="https://render.githubusercontent.com/render/math?math=f=0"> is
-   implemented along with leave-one-out cross validation for model
-   comparison. 
 2. Implement posterior predictive checks.
 3. Investigate possible biases in dominant marker estimates (see
    below). 
