@@ -19,13 +19,13 @@ to work with data in most of the widely used formats.
 ### A note on requirements
 
 You will need to have a C/C++ compiler installed in order to use this
-package (for now).<sup>1</sup> The (RStan Getting
-Started)[https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started]
-page has helpful information on getting your system configured. I'll
-help if I can, but I've been using Macs for nearly 10 years. I can
-probably help with Mac or Linux problems, but I may not be much help
-with Windows. If you've managed to install other R packages from
-source, you'll probably be just fine. 
+package (for now).<sup>1</sup> The
+[https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started](RStan
+Getting Started) page has helpful information on getting your system
+configured. I'll help if I can, but I've been using Macs for nearly 10
+years. I can probably help with Mac or Linux problems, but I may not
+be much help with Windows. If you've managed to install other R
+packages from source, you'll probably be just fine.
 
 I also specified minimum versions for all of the libraries that `Hickory`
 depends on. It's possible I could get away with earlier versions, but
@@ -61,7 +61,7 @@ The installation will take longer, but you'll be able to run
 available. If you'd prefer, you can simply look at the vignettes in
 the `doc` directory here: 
 
-https://github.com/kholsinger/Hickory/tree/master/doc
+[https://github.com/kholsinger/Hickory/tree/master/doc]
 
 You'll probably be interested only in the HTML files in this
 directory. The Rmd file is the
