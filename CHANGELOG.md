@@ -8,6 +8,9 @@
   analysis to identify locus/population combinations in which the
   estimated credible interval (95% by default) for the
   within-population inbreeding coefficient does not include 0.  
+  
+- Updated Roadmap. Defer investigation of dominant markers until after
+  other tasks are complete.
 
 ## 11 October 2020
 

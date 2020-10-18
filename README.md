@@ -88,12 +88,12 @@ rough sequence.
    differences among populations. ***DONE***
    
 2. Implement posterior predictive checks.
-3. Investigate possible biases in dominant marker estimates (see
-   below). 
-4. Implement population- and locus-specific effects on <img
+3. Implement population- and locus-specific effects on <img
    src="https://render.githubusercontent.com/render/math?math=\theta">,
    including identification of potential outlier loci.
-5. Implement interface with `adegenet`.
+4. Implement interface with `adegenet`.
+5. Investigate possible biases in dominant marker estimates (see
+   below). 
 6. Implement multiallele version of `analyze_codominant()`.
 
 ### A note on dominant markers
