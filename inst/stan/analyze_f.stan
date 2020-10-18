@@ -14,13 +14,14 @@ parameters {
 }
 
 transformed parameters {
-  vector<lower=0, upper=1>[3] x[N_pops, N_loci]; // genotype frequencies
   real<lower=-1, upper=1> f[N_pops, N_loci]; // inbreeding coefficients
+  vector<lower=0, upper=1>[3] x[N_pops, N_loci]; // genotype frequencies
 
   for (i in 1:N_pops) {
     for (j in 1:N_loci) {
-      real f_min = max({-p[i,j]/(1.0 - p[i,j]), -(1.0 - p[i,j])/p[i,j]});
-      f[i,j] = w[i,j]*(1.0 - f_min) + (1 - w[i,j])*f_min;
+      real f_min; 
+      f_min = max({-p[i,j]/(1.0 - p[i,j]), -(1.0 - p[i,j])/p[i,j]});
+      f[i,j] = w[i,j]*1.0 + (1.0 - w[i,j])*f_min;
       x[i,j][1] = (p[i,j]^2)*(1.0 - f[i,j]) + f[i,j]*p[i,j];
       x[i,j][2] = 2.0*p[i,j]*(1.0 - p[i,j])*(1-f[i,j]);
       x[i,j][3] = ((1.0 - p[i,j])^2)*(1.0 - f[i,j]) + f[i,j]*(1.0 - p[i,j]);

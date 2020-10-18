@@ -5,10 +5,13 @@
 \title{Estimate inbreeding coefficients at each population/locus combination
 in the data set}
 \usage{
-analyze_f(genos, ...)
+analyze_f(genos, prob = 0.05, ...)
 }
 \arguments{
 \item{genos}{A list in the format retured by \code{read_marker_data()}}
+
+\item{prob}{Sets the credible interval to flag population locus combinations,
+i.e., those where the central 1-\code{prob} credible interval does not overlap 0}
 
 \item{...}{Arguments passed to \code{rstan::sampling} (e.g., iter, chains)}
 }
@@ -16,6 +19,7 @@ analyze_f(genos, ...)
 An object of class \code{stanfit} returned by \code{rstan::sampling}
 }
 \description{
-Estimate inbreeding coefficients at each population/locus combination
-in the data set
+The summary printed before the function exits identifies the
+loci for which the central (1-\code{prob}) credible interval for f does not
+include 0.
 }
