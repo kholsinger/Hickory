@@ -21,7 +21,8 @@ analyze_codominant <- function(genos,
   set_priors(prior_pi = prior_pi,
              prior_f = prior_f,
              prior_theta = prior_theta,
-             N_loci = genos$N_loci)
+             N_loci = genos$N_loci,
+             N_pops = genos$N_pops)
   if (theta_zero) {
     return(analyze_codominant_t0(genos,
                                  prior_pi,

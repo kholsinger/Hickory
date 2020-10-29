@@ -17,12 +17,14 @@ data {
   real<lower=0> sd_theta;     // sd of logit(theta)
   int<lower=0, upper=1> f_zero;  // 1 = fix it to 0
   int<lower=0, upper=1> f_one;   // 1 = fix it to 1
+  real<lower=0> alpha;        // scaling for among-locus theta
 }
 
 parameters {
   real logit_f;               // logit of f
   real logit_theta;           // logit of theta
   vector[N_loci] logit_pi;    // logit of pi
+  vector<lower=0, upper=0>[N_loci] theta_i; // locus-specific theta
   // allele frequencies by locus & population
   //
   vector<lower=0, upper=1>[N_loci] p[N_pops];
@@ -49,6 +51,7 @@ transformed parameters {
 
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
+    print("f=", f, " p[", j, ",", i, "]=", p[j][i])
       x[i,j] = (p[j][i]^2)*(1.0 - f) + f*p[j][i] +
                2.0*p[j][i]*(1.0 - p[j][i])*(1-f);
     }
@@ -72,9 +75,11 @@ model {
   logit_f ~ normal(mu_f, sd_f);
   logit_theta ~ normal(mu_theta, sd_theta);
   for (i in 1:N_loci) {
+    theta_i[i] ~ beta(((1.0 - alpha)/alpha)*theta,
+                      ((1.0 - alpha)/alpha)*(1.0 - theta));
     for (j in 1:N_pops) {
-      p[j][i] ~ beta(((1.0 - theta)/theta)*pi[i],
-                     ((1.0 - theta)/theta)*(1.0 - pi[i]));
+      p[j][i] ~ beta(((1.0 - theta_i[i])/theta_i[i])*pi[i],
+                     ((1.0 - theta_i[i])/theta_i[i])*(1.0 - pi[i]));
     }
   }
 }
