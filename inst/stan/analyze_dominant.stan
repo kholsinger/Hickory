@@ -15,7 +15,8 @@ data {
   real<lower=0> sd_f;         // sd of logit(f)
   real mu_theta;              // logit of mean(theta)
   real<lower=0> sd_theta;     // sd of logit(theta)
-  int<lower=0, upper=1> f_zero;  // 0 = estimate f, 1 = fix it to 0
+  int<lower=0, upper=1> f_zero;  // 1 = fix it to 0
+  int<lower=0, upper=1> f_one;   // 1 = fix it to 1
 }
 
 parameters {
@@ -33,10 +34,15 @@ transformed parameters {
   vector<lower=0, upper=1>[N_loci] pi;  // mean allele frequencies
   real<lower=0, upper=1> x[N_loci, N_pops]; // dominant phenotype frequencies
 
-  if (f_zero == 0) {
+  if ((f_zero == 0) && (f_one == 0)) {
     f = inv_logit(logit_f);
-  } else {
+  } else if ((f_zero == 1) && (f_one == 0)) {
     f = 0.0;
+  } else if ((f_zero == 0) && (f_one == 1)) {
+    f = 1.0;
+  } else {
+    reject("Inconsistent specification of f_zero and f_one: f_zero=", f_zero,
+           ", f_one=", f_one);
   }
   theta = inv_logit(logit_theta);
   pi = inv_logit(logit_pi);

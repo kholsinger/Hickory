@@ -10,6 +10,7 @@ analyze_dominant(
   prior_f = list(lower = 0.01, upper = 0.2),
   prior_theta = list(lower = 0.01, upper = 0.2),
   f_zero = FALSE,
+  f_one = FALSE,
   theta_zero = FALSE,
   ...
 )
@@ -24,6 +25,8 @@ analyze_dominant(
 \item{prior_theta}{A vector specifying lower and upper limits on theta}
 
 \item{f_zero}{TRUE for f = 0 model}
+
+\item{f_one}{TRUE for f = 1 model}
 
 \item{theta_zero}{TRUE for theta = 0 model}
 
