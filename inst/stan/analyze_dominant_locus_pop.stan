@@ -15,16 +15,14 @@ data {
   real<lower=0> sd_f;         // sd of logit(f)
   real mu_theta;              // logit of mean(theta)
   real<lower=0> sd_theta;     // sd of logit(theta)
-  int<lower=0, upper=1> f_zero;  // 1 = fix it to 0
-  int<lower=0, upper=1> f_one;   // 1 = fix it to 1
-  real<lower=0> alpha;        // scaling for among-locus theta
+  real<lower=0, upper=1> alpha;  // "tightness" of among-locus theta
 }
 
 parameters {
   real logit_f;               // logit of f
   real logit_theta;           // logit of theta
   vector[N_loci] logit_pi;    // logit of pi
-  vector<lower=0, upper=0>[N_loci] theta_i; // locus-specific theta
+  vector<lower=0, upper=1>[N_loci] theta_i; // locus-specific theta
   // allele frequencies by locus & population
   //
   vector<lower=0, upper=1>[N_loci] p[N_pops];
@@ -36,22 +34,12 @@ transformed parameters {
   vector<lower=0, upper=1>[N_loci] pi;  // mean allele frequencies
   real<lower=0, upper=1> x[N_loci, N_pops]; // dominant phenotype frequencies
 
-  if ((f_zero == 0) && (f_one == 0)) {
-    f = inv_logit(logit_f);
-  } else if ((f_zero == 1) && (f_one == 0)) {
-    f = 0.0;
-  } else if ((f_zero == 0) && (f_one == 1)) {
-    f = 1.0;
-  } else {
-    reject("Inconsistent specification of f_zero and f_one: f_zero=", f_zero,
-           ", f_one=", f_one);
-  }
+  f = inv_logit(logit_f);
   theta = inv_logit(logit_theta);
   pi = inv_logit(logit_pi);
 
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-    print("f=", f, " p[", j, ",", i, "]=", p[j][i])
       x[i,j] = (p[j][i]^2)*(1.0 - f) + f*p[j][i] +
                2.0*p[j][i]*(1.0 - p[j][i])*(1-f);
     }
@@ -85,7 +73,7 @@ model {
 }
 
 generated quantities {
-  vector[N_pops*N_loci] log_lik; 
+  vector[N_pops*N_loci] log_lik;
 
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
