@@ -7,6 +7,11 @@
 #' @param prior_theta A vector specifying lower and upper limits on theta
 #' @param f_zero TRUE for f = 0 model
 #' @param theta_zero TRUE for theta = 0 model
+#' @param theta_ij TRUE to estimate locus- and population-specific effects on
+#' theta
+#' @param alpha_l "tightness" of prior on locus-specific differences in theta
+#' @param alpha_p "tightness" of prior on population-specific differences in
+#' theta
 #' @param ... Optional arguments passed to `rstan::sampling()`
 #' @return An object of class `stanfit` returned by `rstan::sampling()`
 #'
@@ -16,6 +21,9 @@ analyze_codominant <- function(genos,
                                prior_theta = list(lower = 0.01, upper = 0.2),
                                f_zero = FALSE,
                                theta_zero = FALSE,
+                               theta_ij = FALSE,
+                               alpha_l = 0.1,
+                               alpha_p = 0.1,
                                ...)
 {
   set_priors(prior_pi = prior_pi,
@@ -47,7 +55,7 @@ analyze_codominant <- function(genos,
                          init = initialize_chains,
                          ...)
   print(fit, pars = c("f", "theta", "lp__"), digits_summary = 3)
-  color_scheme_set("brightblue")
+  bayesplot::color_scheme_set("brightblue")
   suppressMessages(
     p <- bayesplot::mcmc_intervals(fit, pars = c("f", "theta")) +
       ggplot2::scale_y_discrete(labels = c("f", expression(theta))) +
