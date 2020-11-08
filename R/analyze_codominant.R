@@ -40,20 +40,39 @@ analyze_codominant <- function(genos,
   logit_prior_pi <- logit_prior(prior_pi)
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
-  stan_data <- list(N_loci = genos$N_loci,
-                    N_pops = genos$N_pops,
-                    n = genos$n,
-                    mu_pi = logit_prior_pi$mu,
-                    sd_pi = logit_prior_pi$sd,
-                    mu_f = logit_prior_f$mu,
-                    sd_f = logit_prior_f$sd,
-                    mu_theta = logit_prior_theta$mu,
-                    sd_theta = logit_prior_theta$sd,
-                    f_zero = f_zero)
-  fit <- rstan::sampling(stanmodels$analyze_codominant,
-                         data = stan_data,
-                         init = initialize_chains,
-                         ...)
+  if (theta_ij) {
+    stan_data <- list(N_loci = genos$N_loci,
+                      N_pops = genos$N_pop,
+                      n = genos$n,
+                      N = genos$N,
+                      mu_pi = logit_prior_pi$mu,
+                      sd_pi = logit_prior_pi$sd,
+                      mu_f = logit_prior_f$mu,
+                      sd_f = logit_prior_f$sd,
+                      mu_theta = logit_prior_theta$mu,
+                      sd_theta = logit_prior_theta$sd,
+                      alpha_l = alpha_l,
+                      alpha_p = alpha_p)
+    fit <- rstan::sampling(stanmodels$analyze_codominant_locus_pop,
+                           data = stan_data,
+                           init = initialize_chains,
+                           ...)
+  } else {
+    stan_data <- list(N_loci = genos$N_loci,
+                      N_pops = genos$N_pops,
+                      n = genos$n,
+                      mu_pi = logit_prior_pi$mu,
+                      sd_pi = logit_prior_pi$sd,
+                      mu_f = logit_prior_f$mu,
+                      sd_f = logit_prior_f$sd,
+                      mu_theta = logit_prior_theta$mu,
+                      sd_theta = logit_prior_theta$sd,
+                      f_zero = f_zero)
+    fit <- rstan::sampling(stanmodels$analyze_codominant,
+                           data = stan_data,
+                           init = initialize_chains,
+                           ...)
+  }
   print(fit, pars = c("f", "theta", "lp__"), digits_summary = 3)
   bayesplot::color_scheme_set("brightblue")
   suppressMessages(
