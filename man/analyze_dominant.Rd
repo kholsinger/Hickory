@@ -12,6 +12,8 @@ analyze_dominant(
   f_zero = FALSE,
   f_one = FALSE,
   theta_zero = FALSE,
+  theta_i = FALSE,
+  alpha = 0.1,
   ...
 )
 }

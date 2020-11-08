@@ -5,7 +5,7 @@
 \title{Put priors in global namespace so that they are available to
 \code{initialize_chains()}.}
 \usage{
-set_priors(prior_pi, prior_f, prior_theta, N_loci)
+set_priors(prior_pi, prior_f, prior_theta, N_loci, N_pops)
 }
 \arguments{
 \item{prior_pi}{A vector with the mean and upper bound on pi}
@@ -15,6 +15,8 @@ set_priors(prior_pi, prior_f, prior_theta, N_loci)
 \item{prior_theta}{A vector with the mean and upper bound on theta}
 
 \item{N_loci}{The number of loci in the sample}
+
+\item{N_pops}{The number of populations in the sample}
 }
 \value{
 None

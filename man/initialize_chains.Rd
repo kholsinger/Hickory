@@ -9,7 +9,7 @@ this namespace}
 initialize_chains()
 }
 \value{
-None
+list of ititial values for logit_pi, logit_f, and logit_theta
 }
 \description{
 Initialize pi, f, and theta based on priors

@@ -4,6 +4,7 @@
 *.Rproj
 .Rbuildignore
 .Rhistory
+*.Rsave
 
 ## Stan files to ignore
 ##
