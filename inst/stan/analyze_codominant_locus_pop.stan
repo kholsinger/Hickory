@@ -2,6 +2,19 @@
 // from co-dominant markers (currently only two alleles per locus)
 //
 
+functions {
+  real beta_scale(real p) {
+    real scale;
+    
+    if (p < 0.5) {
+      scale = 1.0/p;
+    } else {
+      scale = 1.0/(1.0 - p);
+    }
+    return scale;
+  }
+}
+
 data {
   int<lower=0> N_loci;        // number of loci
   int<lower=0> N_pops;        // number of populations
@@ -14,6 +27,8 @@ data {
   real<lower=0> sd_f;         // sd of logit(f)
   real mu_theta;              // logit of mean(theta)
   real<lower=0> sd_theta;     // sd of logit(theta)
+  int<lower=0, upper=1> f_zero;  // 1 = fix it to 0
+  int<lower=0, upper=1> f_one;   // 1 = fix it to 1
   real<lower=0, upper=1> alpha_l;  // "tightness" of among-locus theta
   real<lower=0, upper=1> alpha_p;  // "tightness" of among-pop theta
 }
@@ -21,6 +36,8 @@ data {
 parameters {
   real logit_f;               // logit of f
   real logit_theta;           // logit of theta
+  real<lower=0, upper=1> alpha_ll;  // "tightness" of among-locus theta
+  real<lower=0, upper=1> alpha_pp;  // "tightness" of among-pop theta
   vector[N_loci] logit_pi;    // logit of pi
   vector<lower=0, upper=1>[N_loci] theta_i; // locus-specific theta
   vector<lower=0, upper=1>[N_pops] theta_j; // population-specific theta
@@ -38,7 +55,16 @@ transformed parameters {
   //
   real<lower=0, upper=1> theta_ij[N_loci, N_pops]; 
 
-  f = inv_logit(logit_f);
+  if ((f_zero == 0) && (f_one == 0)) {
+    f = inv_logit(logit_f);
+  } else if ((f_zero == 1) && (f_one == 0)) {
+    f = 0.0;
+  } else if ((f_zero == 0) && (f_one == 1)) {
+    f = 1.0;
+  } else {
+    reject("Inconsistent specification of f_zero and f_one: f_zero=", f_zero,
+           ", f_one=", f_one);
+  }
   theta = inv_logit(logit_theta);
   pi = inv_logit(logit_pi);
 
@@ -66,13 +92,17 @@ model {
   logit_pi ~ normal(mu_pi, sd_pi);
   logit_f ~ normal(mu_f, sd_f);
   logit_theta ~ normal(mu_theta, sd_theta);
+  alpha_pp ~ beta(beta_scale(alpha_p)*alpha_p,
+                  beta_scale(alpha_p)*(1.0 - alpha_p));
+  alpha_ll ~ beta(beta_scale(alpha_l)*alpha_l,
+                  beta_scale(alpha_l)*(1.0 - alpha_l));
   for (j in 1:N_pops) {
-    theta_j[j] ~ beta(((1.0 - alpha_p)/alpha_p)*theta,
-                      ((1.0 - alpha_p)/alpha_p)*(1.0 - theta));
+    theta_j[j] ~ beta(((1.0 - alpha_pp)/alpha_pp)*theta,
+                      ((1.0 - alpha_pp)/alpha_pp)*(1.0 - theta));
   }
   for (i in 1:N_loci) {
-    theta_i[i] ~ beta(((1.0 - alpha_l)/alpha_l)*theta,
-                      ((1.0 - alpha_l)/alpha_l)*(1.0 - theta));
+    theta_i[i] ~ beta(((1.0 - alpha_ll)/alpha_ll)*theta,
+                      ((1.0 - alpha_ll)/alpha_ll)*(1.0 - theta));
   }
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {

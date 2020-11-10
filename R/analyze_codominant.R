@@ -51,6 +51,8 @@ analyze_codominant <- function(genos,
                       sd_f = logit_prior_f$sd,
                       mu_theta = logit_prior_theta$mu,
                       sd_theta = logit_prior_theta$sd,
+                      f_zero = f_zero,
+                      f_one = f_one,
                       alpha_l = alpha_l,
                       alpha_p = alpha_p)
     fit <- rstan::sampling(stanmodels$analyze_codominant_locus_pop,
