@@ -1,3 +1,9 @@
+## 8 November 2018
+- Added estimates of locus- and population-specific effects on
+  theta. NOTE: The parameterization is different from the one used in
+  Guo et al. _Journal of the American Statistical Association_
+  104:142-154; 2009.
+
 ## 18 October 2020
 
 - Added estimate of within-population inbreeding coefficient by locus
@@ -7,7 +13,7 @@
 - Included summary of within-population inbreeding coefficient
   analysis to identify locus/population combinations in which the
   estimated credible interval (95% by default) for the
-  within-population inbreeding coefficient does not include 0.  
+  within-population inbreeding coefficient does not include 0.
   
 - Updated Roadmap. Defer investigation of dominant markers until after
   other tasks are complete.

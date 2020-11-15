@@ -8,6 +8,11 @@
 #' @param f_zero TRUE for f = 0 model
 #' @param f_one TRUE for f = 1 model
 #' @param theta_zero TRUE for theta = 0 model
+#' @param theta_ij TRUE to estimate locus- and population-specific effects on
+#' theta
+#' @param alpha_l "tightness" of prior on locus-specific differences in theta
+#' @param alpha_p "tightness" of prior on population-specific differences in
+#' theta
 #' @param ... Optional arguments passed to `rstan::sampling()`
 #' @return An object of class `stanfit` returned by `rstan::sampling()`
 #'
@@ -18,8 +23,9 @@ analyze_dominant <- function(genos,
                              f_zero = FALSE,
                              f_one = FALSE,
                              theta_zero = FALSE,
-                             theta_i = FALSE,
-                             alpha = 0.1,
+                             theta_ij = FALSE,
+                             alpha_l = 0.1,
+                             alpha_p = 0.1,
                              ...)
 {
   if (f_zero && f_one) {
@@ -39,7 +45,7 @@ analyze_dominant <- function(genos,
   logit_prior_pi <- logit_prior(prior_pi)
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
-  if (theta_i) {
+  if (theta_ij) {
     stan_data <- list(N_loci = genos$N_loci,
                       N_pops = genos$N_pop,
                       n = genos$n[, , 2],
@@ -50,12 +56,14 @@ analyze_dominant <- function(genos,
                       sd_f = logit_prior_f$sd,
                       mu_theta = logit_prior_theta$mu,
                       sd_theta = logit_prior_theta$sd,
-                      alpha = alpha)
+                      f_zero = f_zero,
+                      f_one = f_one,
+                      alpha_l = alpha_l,
+                      alpha_p = alpha_p)
     fit <- rstan::sampling(stanmodels$analyze_dominant_locus_pop,
                            data = stan_data,
                            init = initialize_chains,
                            ...)
-    print(fit, pars = c("f", "theta", "lp__"), digits_summary = 3)
   } else {
     stan_data <- list(N_loci = genos$N_loci,
                       N_pops = genos$N_pop,
@@ -73,9 +81,9 @@ analyze_dominant <- function(genos,
                            data = stan_data,
                            init = initialize_chains,
                            ...)
-    print(fit, pars = c("f", "theta", "lp__"), digits_summary = 3)
   }
-  color_scheme_set("brightblue")
+  print(fit, pars = c("f", "theta", "lp__"), digits_summary = 3)
+  bayesplot::color_scheme_set("brightblue")
   suppressMessages(
     p <- bayesplot::mcmc_intervals(fit, pars = c("f", "theta")) +
       ggplot2::scale_y_discrete(labels = c("f", expression(theta))) +
