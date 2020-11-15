@@ -1,3 +1,9 @@
+## 15 November
+- Added outlier detection. NOTE: The approach used is different from
+  the one described in Guo et al. It uses posterior comparison of
+  individual effects to overall effects, taking advantage of the new
+  parameterization.
+
 ## 8 November 2018
 - Added estimates of locus- and population-specific effects on
   theta. NOTE: The parameterization is different from the one used in

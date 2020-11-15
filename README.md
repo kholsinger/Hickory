@@ -92,16 +92,16 @@ rough sequence.
    including identification of potential outlier loci.
    
    ***PARTIALLY DONE***: Effects are implemented, but the new
-   parameterization is not documented, identification of outliers
-   has not been implemented, and variance of locus- and
-   population-specific effects is specified in the prior rather than
-   estimated. 
+   parameterization is not documented. Outlier detection is done
+   differently as well.
 
-3. Implement posterior predictive checks.
+3. Implement interface with `adegenet`.
 
-4. Implement interface with `adegenet`.
+4. Implement posterior predictive checks.
+
 5. Investigate possible biases in dominant marker estimates (see
    below). 
+   
 6. Implement multiallele version of `analyze_codominant()`.
 
 ### A note on dominant markers
