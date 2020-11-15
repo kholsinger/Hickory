@@ -1,8 +1,15 @@
-pairs_stan <- function(chain, stan_model, pars) {
-  energy_vec <- as.matrix(sapply(rstan::get_sampler_params(stan_model,
+#' Plot energy versus specified parameters for one chain
+#'
+#' @export
+#' @param chain The number of the chain to plot
+#' @param fit The model results from which to extract results
+#' @param pars A vector of parameters to plot against energy
+#'
+energy_plot <- function(chain, fit, pars) {
+  energy_vec <- as.matrix(sapply(rstan::get_sampler_params(fit,
                                                            inc_warmup = F),
                                  function(x) x[,"energy__"]))
-  pars_vec <- rstan::extract(stan_model, pars = pars, permuted = F)
+  pars_vec <- rstan::extract(fit, pars = pars, permuted = F)
   energy <- energy_vec[, chain]
   pars <- rep(dimnames(pars_vec)$parameters[1], nrow(energy_vec))
   value <- pars_vec[, chain, 1]
@@ -20,7 +27,12 @@ pairs_stan <- function(chain, stan_model, pars) {
   return(p)
 }
 
-
+#' Report bulk ESS for parameters exceeding a specified threshold
+#'
+#' @export
+#' @param fit The model results for which to check bulk ESS
+#' @param threshold The threshold below which to report parameters
+#'
 diagnose_bulk_ess <- function(fit, threshold = 400) {
   fit_df <- as.data.frame(fit)
   for (name in colnames(fit_df)) {
@@ -31,6 +43,12 @@ diagnose_bulk_ess <- function(fit, threshold = 400) {
   }
 }
 
+#' Report tail ESS for parameters exceeding a specified threshold
+#'
+#' @export
+#' @param fit The model results for which to check tail ESS
+#' @param threshold The threshold below which to report parameters
+#'
 diagnose_tail_ess <- function(fit, threshold = 400) {
   fit_df <- as.data.frame(fit)
   for (name in colnames(fit_df)) {
