@@ -100,21 +100,21 @@ initialize_chains <- function() {
 initialize_locus_pop <- function() {
   chains <- initialize_chains()
   theta <- (prior_theta$upper + prior_theta$lower)/2
-  theta_i <- numeric(N_loci)
+  theta_l <- numeric(N_loci)
   pi <- numeric(N_loci)
   p <- matrix(nrow = N_pops, ncol = N_loci)
   for (i in 1:N_loci) {
-    theta_i[i] <- rbeta(1, theta*prior_alpha, (1-theta)*prior_alpha)
+    theta_l[i] <- rbeta(1, theta*prior_alpha, (1-theta)*prior_alpha)
     pi[i] <- inv_logit(chains$logit_pi[i])
     for (j in 1:N_pops) {
-      p[j, i] <- rbeta(1, ((1-theta_i[i])/theta_i[i])*pi[i],
-                       ((1-theta_i[i])/theta_i[i])*(1-pi[i]))
+      p[j, i] <- rbeta(1, ((1-theta_l[i])/theta_l[i])*pi[i],
+                       ((1-theta_l[i])/theta_l[i])*(1-pi[i]))
     }
   }
   return(list(logit_pi = chains$logit_pi,
               logit_f = chains$logit_f,
               logit_theta = chains$logit_theta,
-              theta_i = theta_i,
+              theta_l = theta_l,
               pi = pi,
               p = p))
 }

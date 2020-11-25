@@ -7,7 +7,7 @@
 #' @param prior_theta A vector specifying lower and upper limits on theta
 #' @param f_zero TRUE for f = 0 model
 #' @param theta_zero TRUE for theta = 0 model
-#' @param theta_ij TRUE to estimate locus- and population-specific effects on
+#' @param theta_lp TRUE to estimate locus- and population-specific effects on
 #' theta
 #' @param alpha_l "tightness" of prior on locus-specific differences in theta
 #' @param alpha_p "tightness" of prior on population-specific differences in
@@ -22,7 +22,7 @@ analyze_codominant <- function(genos,
                                f_zero = FALSE,
                                f_one = FALSE,
                                theta_zero = FALSE,
-                               theta_ij = FALSE,
+                               theta_lp = FALSE,
                                alpha_l = 0.1,
                                alpha_p = 0.1,
                                ...)
@@ -41,7 +41,7 @@ analyze_codominant <- function(genos,
   logit_prior_pi <- logit_prior(prior_pi)
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
-  if (theta_ij) {
+  if (theta_lp) {
     stan_data <- list(N_loci = genos$N_loci,
                       N_pops = genos$N_pop,
                       n = genos$n,

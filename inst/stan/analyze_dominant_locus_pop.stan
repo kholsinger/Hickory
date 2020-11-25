@@ -40,8 +40,8 @@ parameters {
   real<lower=0, upper=1> alpha_ll;  // "tightness" of among-locus theta
   real<lower=0, upper=1> alpha_pp;  // "tightness" of among-pop theta
   vector[N_loci] logit_pi;    // logit of pi
-  vector<lower=0, upper=1>[N_loci] theta_i; // locus-specific theta
-  vector<lower=0, upper=1>[N_pops] theta_j; // population-specific theta
+  vector<lower=0, upper=1>[N_loci] theta_l; // locus-specific theta
+  vector<lower=0, upper=1>[N_pops] theta_p; // population-specific theta
   // allele frequencies by locus & population
   //
   vector<lower=0, upper=1>[N_loci] p[N_pops];
@@ -54,7 +54,7 @@ transformed parameters {
   real<lower=0, upper=1> x[N_loci, N_pops]; // dominant phenotype frequencies
   // locus- and population-specific theta
   //
-  real<lower=0, upper=1> theta_ij[N_loci, N_pops]; 
+  real<lower=0, upper=1> theta_lp[N_loci, N_pops]; 
 
   if ((f_zero == 0) && (f_one == 0)) {
     f = inv_logit(logit_f);
@@ -71,7 +71,7 @@ transformed parameters {
 
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-      theta_ij[i,j] = (theta_i[i] + theta_j[j])/2.0;
+      theta_lp[i,j] = (theta_l[i] + theta_p[j])/2.0;
       x[i,j] = (p[j][i]^2)*(1.0 - f) + f*p[j][i] +
                2.0*p[j][i]*(1.0 - p[j][i])*(1-f);
     }
@@ -99,17 +99,17 @@ model {
   alpha_ll ~ beta(beta_scale(alpha_l)*alpha_l,
                   beta_scale(alpha_l)*(1.0 - alpha_l));
   for (j in 1:N_pops) {
-    theta_j[j] ~ beta(((1.0 - alpha_pp)/alpha_pp)*theta,
+    theta_p[j] ~ beta(((1.0 - alpha_pp)/alpha_pp)*theta,
                       ((1.0 - alpha_pp)/alpha_pp)*(1.0 - theta));
   }
   for (i in 1:N_loci) {
-    theta_i[i] ~ beta(((1.0 - alpha_ll)/alpha_ll)*theta,
+    theta_l[i] ~ beta(((1.0 - alpha_ll)/alpha_ll)*theta,
                       ((1.0 - alpha_ll)/alpha_ll)*(1.0 - theta));
   }
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-      p[j][i] ~ beta(((1.0 - theta_ij[i,j])/theta_ij[i,j])*pi[i],
-                     ((1.0 - theta_ij[i,j])/theta_ij[i,j])*(1.0 - pi[i]));
+      p[j][i] ~ beta(((1.0 - theta_lp[i,j])/theta_lp[i,j])*pi[i],
+                     ((1.0 - theta_lp[i,j])/theta_lp[i,j])*(1.0 - pi[i]));
     }
   }
 }

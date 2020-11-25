@@ -21,14 +21,14 @@ report_outliers <- function(fit,
   if (locus) {
     labels <- colnames(genos$N)
     theta <- rstan::extract(fit, pars = "theta")$theta
-    theta_i <- rstan::extract(fit, pars = "theta_i")$theta_i
-    report_outliers_(labels, theta, theta_i, alpha)
+    theta_l <- rstan::extract(fit, pars = "theta_l")$theta_l
+    report_outliers_(labels, theta, theta_l, alpha)
   }
   if (pop) {
     labels <- rownames(genos$N)
     theta <- rstan::extract(fit, pars = "theta")$theta
-    theta_j <- rstan::extract(fit, pars = "theta_j")$theta_j
-    report_outliers_(labels, theta, theta_j, alpha)
+    theta_p <- rstan::extract(fit, pars = "theta_p")$theta_p
+    report_outliers_(labels, theta, theta_p, alpha)
   }
 }
 
@@ -37,14 +37,14 @@ report_outliers <- function(fit,
 #' @export
 #' @param labels Labels for each item in the report
 #' @param theta Central estimate
-#' @param theta_i Individual estimate
+#' @param theta_l Individual estimate
 #' @param alpha 1 - alpha central credible interval
 #'
-report_outliers_ <- function(labels, theta, theta_i, alpha) {
+report_outliers_ <- function(labels, theta, theta_l, alpha) {
   n_labels <- length(labels)
   n_sample <- length(theta)
   for (i in 1:n_labels) {
-    diff <- theta_i[, i] - theta
+    diff <- theta_l[, i] - theta
     interval <- quantile(diff, c(alpha/2.0, 1.0 - alpha/2.0))
     if ((interval[1] > 0) || (interval[2] < 0)) {
       cat(labels[i], ": ", round(mean(diff), 3), " (",
