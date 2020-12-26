@@ -1,0 +1,96 @@
+---
+title: "Interpreting estimates from dominant markers"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Interpreting estimates from dominant markers}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+`Hickory` provides estimates of $F_{IS}$ (reported as `f`) and $F_{ST}$ (reported as `theta`) for dominant markers. It also provides estimates of locus- and population-specific effects on $F_{ST}$ (reported as `theta_l` and `theta_p`, respectively) when `theta_lp = TRUE` is specified in the call to `analyze_dominant()`. Foll et al.[^1] reported that the original C++ implementation of `Hickory` suffered from biases, especially when inbreeding was relatively common. Independently, users of the C++ implementation reported that estimates of $F_{IS}$ were unrealistically large when a large number of loci were included in the data. Foll et al. proposed a method using Approximate Bayesian Computation that appeared to correct the biases.
+
+This implementation of `Hickory` uses the Hamiltonia Monte Carlo as implemented in Stan[^2] rather than the Metropolis-Hastings sampler used in the original C++ version of Hickory. Only a few checks of the new implementation have been made, and this implementation does not attempt to correct the ascertainment bias Foll et al. describe, but the checks that have been made so far suggest that estimates from this version of Hickory will be similar to those from [ABC4F](https://leca.osug.fr/Population-Genomics-Software), at least when locus- and population-specific effects are estimated. This could mean that it was deficiencies of the MCMC algorithm that was responsible for the largest biases associated with the C++ implementation. That being said, users should be cautious when interpreting estimates of $F_{IS}$ from dominant markers, regardless of whether they are made with `Hickory` or with `ABC4F`.
+
+## Reasons for caution
+
+Consider one locus with two alleles. If one allele, $A_1$ say, is dominant to the other, we will have the following genotype to phenotype mapping
+
+| Genotype  | $A_1A_1$ | $A_1A_2$ | $A_2A_2$ |
+|:---------:|:--------:|:--------:|:--------:|
+| Phenotype | 1        | 1        | 0
+
+If we have observations only at this locus from one population, then
+
+$$
+x = p^2(1 - f) + fp + 2p(1-p)(1-f)  \quad ,
+$$
+where $x$ is the frequency of the dominant phenotype, $p$ is the frequency of the $A_1$ allele, and $f$ is the inbreeding coefficient within the population [^3]. Thus, there are many combinations of $f$ and $p$ consistent with any genotype frequency. In fact, if we had observations only at this one locus in this population, we would be unable to say anything about $f$ at all. That being said, if we express $f$ as a function of $x$ and $p$, we can see that there are restrictions on the relationship between the frequency of dominant phenotypes and the allele frequency. Specifically,
+
+$$
+\begin{eqnarray*}
+x &=& p^2(1 - f) + fp + 2p(1-p)(1-f) \\
+x - p^2 - 2p(1-p) &=& -f\left(p^2 + 2p(1-p) - p\right) \\
+&=& -f\left(p(p-1) + 2p(1-p)\right) \\
+&=& -fp(1-p) \\
+f &=& 2 - \frac{x - p^2}{p(1-p)} \quad .
+\end{eqnarray*}
+$$
+
+In short, for $f$ to lie in $[0,1]$, $x$ must lie in $[p, p^2 + 2p(1-p)]$.
+
+Now suppose we have observations from another locus. The same constraint applies, but if we assume the same $f$ applies across loci, the range of $f$ and $p$ begins to constrict. With enough loci, we may be able to estimate $f$, but only if we assume that the same inbreeding coefficient applies across all loci. In terms that statisticians use, $f$ is only weakly identified, although the identification improves as the number of loci and populations increases. Notice, however, that if populations are fixed for alternative alleles, $f$ is undefined.
+
+## A note on convergence diagnostics
+
+You may get a warning message about "Bulk ESS" or "Tail ESS" too low. If you want to know the details of what those messages mean, read the Stan documentation.[^4] In the limited cases studied so far, the messages arise when many loci are monomorphic, making it very difficult to identify $f$ and $\theta$ simultaneously. The result is that the chains have high autocorrelations, meaning that a very large number of samples is needed to get a reasonable number of independent samples. If you get this message, take a look at the n_eff column in the output. Adjust the sampling parameters to increase both the length of the warmup. Specifically, instead of the default
+
+```
+iter = 2000
+```
+
+which is set by the defaults in `rstan`, pass the following as arguments in your call to `analyze_dominant()`.
+
+```
+warmup = 2000
+iter = warmup + x
+```
+
+where `x` is about `500/n_eff` times 1000 and `n_eff` is the smallest reported. For example, if the smallest `n_eff` in the default analysis is 25, then I suggest the following call:
+
+```
+analyze_dominant(genos, warmup = 2000, iter = 2000 + (500/25)*1000)
+```
+
+If you still get the warning message after that, try this
+
+```
+fit_array <- as.array(fit)
+mcmc_trace(fit_array[, , c("f", "theta")])
+```
+
+You should get a trace plot showing the values taking during sampling for each of the four chains. What you want to see is that the chains are broadly overlapping like this (produced from a default run with codominant markers - `protea_repens.csv`).
+
+![Traceplots from analysis of `protea_repens.csv`](figure/protea_repens.png)
+
+With high autocorrelation, the traces will change more gradually, but if they are broadly overlapping and all of the "explore" the same space, the results are likely to be reliable.
+
+NOTE: There's a good chance that computations will bog down if you have to increase the number of iterations substantially, because of all of the intermediate calculations that are saved. To avoid this problem, you can "thin" the results so that only some of them are saved for the final analysis. A total of 4000 samples in the posterior is plenty for reliable analysis. To continue with the preceding example, we can accomplish this by adding a `thin` argument to the call:
+
+
+```
+analyze_dominant(genos, warmup = 2000, iter = 22000, thin = 20000/20)
+```
+
+With 4 chains (the default), this will produce a sample of 4000 draws from the posterior.
+
+## Conclusion
+
+Until the statistical properties of the approach implemented here have been compared with those in `ABC4F`, it is probably advisable to compare the results of `Hickory` with those of `ABC4F` and to interpret estimates of $F_{IS}$ (reported here as `f`) with considerable caution.
+
+[^1]: Foll M, Beaumont MA, Gaggiotti O. 2008. An Approximate Bayesian Computation Approach to Overcome Biases That Arise When Using Amplified Fragment Length Polymorphism Markers to Study Population Structure. *Genetics* 179:927-939.
+
+[^2]: Stan Development Team. 2000. Stan Modeling Language Users Guide, Reference Manual, and Functions Reference, version 2.25. [https://mc-stan.org/users/documentation/](https://mc-stan.org/users/documentation/)
+
+[^3]: A full treatment would include sampling to connect (unobserved) population frequencies with data. We will focus on frequencies alone to simplify the discussion.
+
+[^4]: [https://mc-stan.org/misc/warnings.html#bulk-ess](https://mc-stan.org/misc/warnings.html#bulk-ess)

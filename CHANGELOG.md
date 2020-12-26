@@ -1,3 +1,7 @@
+## 26 December
+- Added vignettes for locus- and population-specific effects and for
+  dominant markers.
+
 ## 15 November
 - Added outlier detection. NOTE: The approach used is different from
   the one described in Guo et al. It uses posterior comparison of

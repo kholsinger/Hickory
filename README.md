@@ -71,39 +71,6 @@ The Rmd file is the [rmarkdown](https://rmarkdown.rstudio.com/) file
 that produced the HTML. The R file is R code that's extracted from
 the Rmd file.
 
-### Roadmap
-
-There are a lot of improvements that I need to make before this
-package is ready for release on CRAN. Here's what I have in mind, in
-rough sequence. 
-
-1. Implement <img
-   src="https://render.githubusercontent.com/render/math?math=f=0">
-   and 
-   <img
-   src="https://render.githubusercontent.com/render/math?math=\theta=0">
-   models with model comparison using 
-   `loo` to provide ways to evaluate whether there is evidence for
-   inbreeding and whether there is evidence for allele frequency
-   differences among populations. ***DONE***
-   
-2. Implement population- and locus-specific effects on <img
-   src="https://render.githubusercontent.com/render/math?math=\theta">,
-   including identification of potential outlier loci.
-   
-   ***PARTIALLY DONE***: Effects are implemented, but the new
-   parameterization is not documented. Outlier detection is done
-   differently as well.
-
-3. Implement interface with `adegenet`.
-
-4. Implement posterior predictive checks.
-
-5. Investigate possible biases in dominant marker estimates (see
-   below). 
-   
-6. Implement multiallele version of `analyze_codominant()`.
-
 ### A note on dominant markers
 
 Foll et al.<sup>2</sup> identified biases associated with the method
@@ -125,13 +92,59 @@ aren't too sensitive to <img
 src="https://render.githubusercontent.com/render/math?math=f">, so
 those estimates are likely to be reliable.
 
+If you plan to use `Hickory` to analyze dominant markers, I encourage
+you to read the vignette, `vignette("dominant")`.
+
+### A note on the Github repository
+
+If you visit the repository you'll see that the "main" branch is still
+called "master". I plan to rename it after Github releases tools
+making it easier. I am not good at `git`, and I need all of the help I
+can get.
+
+### Roadmap
+
+There are a lot of improvements that still need to be made. In
+addition to the items listed below, I'll be working on improved
+documentation. Please don't hesitate to email me if you have a
+question, a comment, or suggestions for future improvements.
+
+1. Implement <img
+   src="https://render.githubusercontent.com/render/math?math=f=0">
+   and 
+   <img
+   src="https://render.githubusercontent.com/render/math?math=\theta=0">
+   models with model comparison using 
+   `loo` to provide ways to evaluate whether there is evidence for
+   inbreeding and whether there is evidence for allele frequency
+   differences among populations. 
+   
+   ***DONE***
+   
+2. Implement population- and locus-specific effects on <img
+   src="https://render.githubusercontent.com/render/math?math=\theta">,
+   including identification of potential outlier loci and populations.
+   
+   ***DONE***
+
+3. Implement interface with `adegenet`.
+
+4. Build in some internal tests to ensure accuracy and consistency.
+
+5. Implement posterior predictive checks.
+
+6. Investigate possible biases in dominant marker estimates.
+   
+7. Implement multiallele version of `analyze_codominant()`.
+
+8. Implement locus and population selection
 
 <sup>1</sup>Once I feel comfortable enough with this package to release it
     to CRAN, I believe that the build system there will produce the
     binaries for different platforms. I don't have the ability to do
     that myself.
     
-<sup>2</sup>Foll M, Beaumont MA, Gaggiotti O. 2000. An Approximate
+<sup>2</sup>Foll M, Beaumont MA, Gaggiotti O. 2008. An Approximate
     Bayesian Computation Approach to Overcome Biases That Arise When
     Using Amplified Fragment Length Polymorphism Markers to Study
-    Population Structure. <em>Genetics</em> 179:927-939.     
+    Population Structure. <em>Genetics</em> 179:927-939.

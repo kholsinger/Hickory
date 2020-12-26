@@ -1,6 +1,9 @@
 #' Estimate inbreeding coefficients at each population/locus combination
 #' in the data set
 #'
+#' IMPORTANT NOTE: The underlying Stan code, while relatively straightforward
+#' has not been validated. Use with caution.
+#'
 #' @description The summary printed before the function exits identifies the
 #' loci for which the central (1-`prob`) credible interval for f does not
 #' include 0.
@@ -21,9 +24,7 @@ analyze_f <- function(genos,
                     n = genos$n)
   fit <- rstan::sampling(stanmodels$analyze_f,
                          data = stan_data,
-                         refresh = 0,
                          ...)
-  summarize_f(fit, genos)
   return(fit)
 }
 
@@ -45,7 +46,7 @@ summarize_f <- function(fit, genos, prob = 0.05) {
         cat("f[",
             rownames(genos$N)[i], ",",
             colnames(genos$N)[j], "]: ",
-            round(mean(f[, i, j]), 3), "(",
+            round(mean(f[, i, j]), 3), " (",
             round(interval[1], 3), ",",
             round(interval[2], 3), ")\n",
             sep = "")

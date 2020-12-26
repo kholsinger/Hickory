@@ -10,8 +10,9 @@ analyze_codominant(
   prior_f = list(lower = 0.01, upper = 0.2),
   prior_theta = list(lower = 0.01, upper = 0.2),
   f_zero = FALSE,
+  f_one = FALSE,
   theta_zero = FALSE,
-  theta_ij = FALSE,
+  theta_lp = FALSE,
   alpha_l = 0.1,
   alpha_p = 0.1,
   ...
@@ -30,7 +31,7 @@ analyze_codominant(
 
 \item{theta_zero}{TRUE for theta = 0 model}
 
-\item{theta_ij}{TRUE to estimate locus- and population-specific effects on
+\item{theta_lp}{TRUE to estimate locus- and population-specific effects on
 theta}
 
 \item{alpha_l}{"tightness" of prior on locus-specific differences in theta}

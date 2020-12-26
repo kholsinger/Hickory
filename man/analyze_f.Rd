@@ -23,3 +23,7 @@ The summary printed before the function exits identifies the
 loci for which the central (1-\code{prob}) credible interval for f does not
 include 0.
 }
+\details{
+IMPORTANT NOTE: The underlying Stan code, while relatively straightforward
+has not been validated. Use with caution.
+}

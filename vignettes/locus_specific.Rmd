@@ -1,0 +1,79 @@
+---
+title: "Locus- and population-specific estimates"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Locus- and population-specific estimates}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo = FALSE}
+library(Hickory)
+```
+
+Hickory allows users to estimate locus- and population-specific effects on `theta` by specifying `theta_lp = TRUE` in the call to `analyze_codominant()` or `analyze_dominant()`. The model is similar in spirit to the ones in Beaumont and Balding[^1] and Guo et al.[^2] Specifically, in Beaumont and Balding model $F_{ij}$, the locus- and population-specific estimate of $F_{ST}$ as
+
+$$
+\mbox{log}\left(\frac{F_{ij}}{1 - F_{ij}}\right) = \alpha_i + \beta_i + \gamma_{ij} \quad ,
+$$
+
+where $\alpha_i$ is the locus-specific effect, $\beta_i$ is the population-specific effect, and $\gamma_{ij}$ is a specific locus by population effect. Beaumont and Balding define $F_{ij}$ as "the probability that two randomly chosen chromosomes in a population have a common ancestor within that population, without there having been intervening migration or mutation."
+
+The definition Guo et al. use is related, but not identical. As in Holsinger and Weir[^3], they imagine that populations and loci are sampled from an underlying distribution of allele frequencies reflecting both that the populations and loci included in a study are only a sample of all populations and loci that could have been included and that drift introduces additional stochasticity attributable to the evolutionary process. In the Guo et al. formulation
+
+$$
+\theta_{ij} = 1 - (1 - \theta_i)(1 - \theta_j) \quad ,
+$$
+
+where $\theta_{ij}$ is the locus- and population-specific estimate of $F_{ST}$, $\theta_i$ is the locus-specific effect, and $\theta_j$ is the population-specific effect.
+
+Interpreting estimates of the locus- or population-specific effects in either formulation is not straightforward. The non-linear relationships in both formulations implies that the mean $F_{ST}$ across loci and populations does not have a simple relationship to the mean locus- and population-specific effects.
+
+## A new formulation of locus- and population-specific effects
+
+A simple alternative formulation is adopted here, namely
+
+$$
+\theta_{ij} = \frac{\theta_i + \theta_j}{2} \quad .
+$$
+
+In this formulation, the mean locus effect and the mean population effect are equal to the mean $F_{ST}$. 
+
+NOTE: To make it a little easier to remember which subscript refers to the locus effect and which refers to the population effect, Hickory uses `theta_l` to refer to the locus effect and `theta_p` to refer to the population effect. That's why the option is called `theta_lp`.
+
+## Detecting outliers
+
+In addition to facilitating interpretation, this formulation also suggests a simple approach to detecting outliers for populations and loci. Specifically, the Bayesian model implementing this approach can be written as
+
+$$
+\begin{eqnarray*}
+k_{ij} &\sim& \mbox{Binomial}(N_{ij}, p_{ij}) \\
+p_{ij} &\sim& \mbox{Beta}\left(\frac{1-\theta_{ij}}{\theta_{ij}}\pi_i, \frac{1-\theta_{ij}}{\theta_{ij}}(1-\pi_i)\right) \\
+\theta_{ij} &=& \frac{\theta_i + \theta_j}{2} \\
+\theta_i &\sim& \mbox{Beta}\left(\frac{1-\alpha_l}{\alpha_l}\theta,
+\frac{1-\alpha_l}{\alpha_l}(1-\theta)\right) \\
+\theta_j &\sim& \mbox{Beta}\left(\frac{1-\alpha_p}{\alpha_p}\theta,
+\frac{1-\alpha_p}{\alpha_p}(1-\theta)\right) \quad ,
+\end{eqnarray*}
+$$
+
+with appropriate priors on $\pi_i$, $\theta$, $\alpha_l$, and $\alpha_p$. To determine whether any particular locus is an outlier, in the sense that the estimate of the locus-specific effect ($\theta_i$) is substantially different from the overall mean ($\theta$), we simply calculate the difference $\delta_i = \theta_i - \theta$ for each sample in the posterior and examine the posterior distribution of $\delta_i$. By default `report_outliers()` will identify any locus where the central 95% credible interval does not overlap zero.
+
+NOTE: This approach to outlier detection has not yet been assessed in simulation studies. Interpret the results with caution.
+
+### A further note
+
+Anyone with an eagle eye and a good memory may notice that the model described above differs from the one in Guo et al. in one other way. It does not include a parent distribution from which mean allele frequencies across populations are drawn. The impact of this difference is likely to be minuscule, but it has not been investigated. To the extent that it matters, this formulation is more flexible. It allows the mean allele frequency at each locus to be determined independently of allele frequencies at other loci rather than all of the being smoothed towards a single allele frequency.
+
+[^1]: Beaumont, M.A., and D. J. Balding.  2004.  Identifying adaptive divergence among populations from genome scans.  _Molecular Ecology_ 13:969-980.
+
+[^2]: Guo, F., D. K. Dey, and K. E. Holsinger.  2009.  A Bayesian hierarchical model for analysis of single-nucleotide polymorphism diversity in multilocus, multipopulation samples.  _Journal of the American Statistical Association_  104:142-154.
+
+[^3]: Holsinger, K. E., and B. S. Weir.  2009.  Genetics in geographically structured populations: defining, estimating, and interpreting $F_{ST}$.  _Nature Review Genetics_ 10:639-650.
