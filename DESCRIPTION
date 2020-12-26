@@ -7,6 +7,8 @@ Authors@R:
            role = c("aut", "cre"),
            email = "kent.holsinger@uconn.edu",
            comment = c(ORCID = "0000-0003-4312-3804"))
+Author: Kent Holsinger [aut, cre]
+Maintainer: Kent Holsinger <kent.holsinger@uconn.edu>
 Description: Hickory provides functions to read genotype data from simple CSV files and to estimate the within population inbreeding coefficient, f, and Wright's Fst, theta.
 License: GPL-3
 Encoding: UTF-8
