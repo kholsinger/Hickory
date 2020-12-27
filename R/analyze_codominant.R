@@ -6,6 +6,7 @@
 #' @param prior_f A vector specifying lower and upper limits on f
 #' @param prior_theta A vector specifying lower and upper limits on theta
 #' @param f_zero TRUE for f = 0 model
+#' @param f_one TRUE for f = 1 model
 #' @param theta_zero TRUE for theta = 0 model
 #' @param theta_lp TRUE to estimate locus- and population-specific effects on
 #' theta

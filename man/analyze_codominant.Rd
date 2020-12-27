@@ -29,6 +29,8 @@ analyze_codominant(
 
 \item{f_zero}{TRUE for f = 0 model}
 
+\item{f_one}{TRUE for f = 1 model}
+
 \item{theta_zero}{TRUE for theta = 0 model}
 
 \item{theta_lp}{TRUE to estimate locus- and population-specific effects on

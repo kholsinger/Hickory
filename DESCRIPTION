@@ -25,7 +25,10 @@ Imports:
     rstan (>= 2.18.1),
     rstantools (>= 2.1.1),
     tidyverse (>= 1.3.0),
-    bayesplot (>= 1.7.2)
+    bayesplot (>= 1.7.2),
+    ggplot2 (>= 3.3.2),
+    loo (>= 2.4.1),
+    readr (>= 1.4.0)
 LinkingTo: 
     BH (>= 1.66.0),
     Rcpp (>= 0.12.0),
