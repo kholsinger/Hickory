@@ -32,10 +32,12 @@ data {
   real<lower=0, upper=1> alpha_p;  // "tightness" of among-pop theta
   int<lower=0, upper=1> f_zero;  // 1 = fix it to 0
   int<lower=0, upper=1> f_one;   // 1 = fix it to 1
+  int<lower=0, upper=1> f_pop;   // 1 == pop-specific f, 0 == common f
 }
 
 parameters {
-  real logit_f;               // logit of f
+  real logit_f;               // mean logit of f
+  vector[N_pops] logit_fp;     // pop-specific logit of f
   real logit_theta;           // logit of theta
   real<lower=0, upper=1> alpha_ll;  // "tightness" of among-locus theta
   real<lower=0, upper=1> alpha_pp;  // "tightness" of among-pop theta
@@ -48,7 +50,7 @@ parameters {
 }
 
 transformed parameters {
-  real<lower=0, upper=1> f;     // within-population inbreeding coefficient
+  vector<lower=0, upper=1>[N_pops] f_p;  // within-pop inbreeding coefficient
   real<lower=0, upper=1> theta; // Fst - Weir & Cockerham
   vector<lower=0, upper=1>[N_loci] pi;  // mean allele frequencies
   real<lower=0, upper=1> x[N_loci, N_pops]; // dominant phenotype frequencies
@@ -56,15 +58,17 @@ transformed parameters {
   //
   real<lower=0, upper=1> theta_lp[N_loci, N_pops]; 
 
-  if ((f_zero == 0) && (f_one == 0)) {
-    f = inv_logit(logit_f);
-  } else if ((f_zero == 1) && (f_one == 0)) {
-    f = 0.0;
-  } else if ((f_zero == 0) && (f_one == 1)) {
-    f = 1.0;
-  } else {
-    reject("Inconsistent specification of f_zero and f_one: f_zero=", f_zero,
-           ", f_one=", f_one);
+  for (j in 1:N_pops) {
+    if ((f_zero == 0) && (f_one == 0)) {
+      f_p[j] = f_pop ? inv_logit(logit_fp[j]) : inv_logit(logit_f);
+    } else if ((f_zero == 1) && (f_one == 0)) {
+      f_p[j] = 0.0;
+    } else if ((f_zero == 0) && (f_one == 1)) {
+      f_p[j] = 1.0;
+    } else {
+      reject("Inconsistent specification of f_zero and f_one: f_zero=", f_zero,
+             ", f_one=", f_one);
+    }
   }
   theta = inv_logit(logit_theta);
   pi = inv_logit(logit_pi);
@@ -72,8 +76,10 @@ transformed parameters {
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
       theta_lp[i,j] = (theta_l[i] + theta_p[j])/2.0;
-      x[i,j] = (p[j][i]^2)*(1.0 - f) + f*p[j][i] +
-               2.0*p[j][i]*(1.0 - p[j][i])*(1-f);
+      // x[i,j] = (p[j][i]^2)*(1.0 - f) + f*p[j][i] +
+      //          2.0*p[j][i]*(1.0 - p[j][i])*(1-f);
+      x[i, j] = 1.0 - (((1.0 - p[j][i])^2)*(1.0 - f_p[j]) +
+                f_p[j]*(1.0 - p[j][i]));
     }
   }
 }
@@ -93,6 +99,7 @@ model {
   //
   logit_pi ~ normal(mu_pi, sd_pi);
   logit_f ~ normal(mu_f, sd_f);
+  logit_fp ~ normal(logit_f, sd_f);
   logit_theta ~ normal(mu_theta, sd_theta);
   alpha_pp ~ beta(beta_scale(alpha_p)*alpha_p,
                   beta_scale(alpha_p)*(1.0 - alpha_p));
@@ -115,8 +122,10 @@ model {
 }
 
 generated quantities {
+  real f;
   vector[N_pops*N_loci] log_lik;
 
+  f = inv_logit(logit_f);
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
       log_lik[(i-1)*N_pops + j] = binomial_lpmf(n[j,i] | N[j,i], x[i,j]);

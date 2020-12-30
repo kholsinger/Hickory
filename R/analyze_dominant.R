@@ -10,6 +10,7 @@
 #' @param theta_zero TRUE for theta = 0 model
 #' @param theta_lp TRUE to estimate locus- and population-specific effects on
 #' theta
+#' @param f_pop TRUE to estimate population-specific f
 #' @param alpha_l "tightness" of prior on locus-specific differences in theta
 #' @param alpha_p "tightness" of prior on population-specific differences in
 #' theta
@@ -24,6 +25,7 @@ analyze_dominant <- function(genos,
                              f_one = FALSE,
                              theta_zero = FALSE,
                              theta_lp = FALSE,
+                             f_pop = FALSE,
                              alpha_l = 0.1,
                              alpha_p = 0.1,
                              ...)
@@ -58,6 +60,7 @@ analyze_dominant <- function(genos,
                       sd_theta = logit_prior_theta$sd,
                       f_zero = f_zero,
                       f_one = f_one,
+                      f_pop = f_pop,
                       alpha_l = alpha_l,
                       alpha_p = alpha_p)
     fit <- rstan::sampling(stanmodels$analyze_dominant_locus_pop,
@@ -65,6 +68,10 @@ analyze_dominant <- function(genos,
                            init = initialize_chains,
                            ...)
   } else {
+    if (f_pop) {
+      cat("NOTE: population-specific estimates of f available only when\n",
+          "theta_lp = TRUE\n")
+    }
     stan_data <- list(N_loci = genos$N_loci,
                       N_pops = genos$N_pop,
                       n = genos$n[, , 2],

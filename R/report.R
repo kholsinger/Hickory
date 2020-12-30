@@ -8,10 +8,10 @@
 #' @param alpha 1 - alpha central credible interval
 #'
 report <- function(fit,
-                      genos,
-                      locus = FALSE,
-                      pop = FALSE,
-                      alpha = 0.05)
+                   genos,
+                   locus = FALSE,
+                   pop = FALSE,
+                   alpha = 0.05)
 {
   if (locus) {
     labels <- colnames(genos$N)
@@ -21,7 +21,11 @@ report <- function(fit,
   if (pop) {
     labels <- rownames(genos$N)
     theta <- rstan::extract(fit, pars = "theta_p")$theta_p
+    cat("theta_p\n")
     report_(labels, theta, alpha)
+    f <- rstan::extract(fit, pars = "f_p")$f_p
+    cat("f_p\n")
+    report_(labels, f, alpha)
   }
 }
 
