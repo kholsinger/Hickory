@@ -11,6 +11,7 @@ analyze_codominant(
   prior_theta = list(lower = 0.01, upper = 0.2),
   f_zero = FALSE,
   f_one = FALSE,
+  f_pop = FALSE,
   theta_zero = FALSE,
   theta_lp = FALSE,
   alpha_l = 0.1,
@@ -30,6 +31,8 @@ analyze_codominant(
 \item{f_zero}{TRUE for f = 0 model}
 
 \item{f_one}{TRUE for f = 1 model}
+
+\item{f_pop}{TRUE to estimate population-specific f}
 
 \item{theta_zero}{TRUE for theta = 0 model}
 

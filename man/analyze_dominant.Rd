@@ -13,6 +13,7 @@ analyze_dominant(
   f_one = FALSE,
   theta_zero = FALSE,
   theta_lp = FALSE,
+  f_pop = FALSE,
   alpha_l = 0.1,
   alpha_p = 0.1,
   ...
@@ -35,6 +36,8 @@ analyze_dominant(
 
 \item{theta_lp}{TRUE to estimate locus- and population-specific effects on
 theta}
+
+\item{f_pop}{TRUE to estimate population-specific f}
 
 \item{alpha_l}{"tightness" of prior on locus-specific differences in theta}
 

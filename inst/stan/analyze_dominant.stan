@@ -49,8 +49,10 @@ transformed parameters {
 
   for (i in 1:N_loci) {
     for (j in 1:N_pops) {
-      x[i,j] = (p[j][i]^2)*(1.0 - f) + f*p[j][i] +
-               2.0*p[j][i]*(1.0 - p[j][i])*(1-f);
+      // x[i,j] = (p[j][i]^2)*(1.0 - f) + f*p[j][i] +
+      //          2.0*p[j][i]*(1.0 - p[j][i])*(1-f);
+      x[i, j] = 1.0 - (((1.0 - p[j][i])^2)*(1.0 - f) +
+                f*(1.0 - p[j][i]));
     }
   }
 }
