@@ -20,6 +20,8 @@ data {
 }
 
 parameters {
+  real mu_pi_est;             // mean logit of allele frequency
+  real<lower=0> sd_pi_est;    // sd of logit(pi)
   real logit_f;               // logit of f
   real logit_theta;           // logit of theta
   vector[N_loci] logit_pi;    // logit of pi
@@ -70,7 +72,7 @@ model {
 
   // priors
   //
-  logit_pi ~ normal(mu_pi, sd_pi);
+  logit_pi ~ normal(mu_pi_est, sd_pi_est);
   logit_f ~ normal(mu_f, sd_f);
   logit_theta ~ normal(mu_theta, sd_theta);
   for (i in 1:N_loci) {
@@ -79,6 +81,8 @@ model {
                      ((1.0 - theta)/theta)*(1.0 - pi[i]));
     }
   }
+  mu_pi_est ~ normal(0.0, sd_pi);
+  sd_pi_est ~ normal(mu_pi, sd_pi);
 }
 
 generated quantities {

@@ -36,8 +36,10 @@ data {
 }
 
 parameters {
+  real mu_pi_est;             // mean logit of allele frequency
+  real<lower=0> sd_pi_est;    // sd of logit(pi)
   real logit_f;               // mean logit of f
-  vector[N_pops] logit_fp;     // pop-specific logit of f
+  vector[N_pops] logit_fp;    // pop-specific logit of f
   real logit_theta;           // logit of theta
   real<lower=0, upper=1> alpha_ll;  // "tightness" of among-locus theta
   real<lower=0, upper=1> alpha_pp;  // "tightness" of among-pop theta
@@ -97,7 +99,7 @@ model {
 
   // priors
   //
-  logit_pi ~ normal(mu_pi, sd_pi);
+  logit_pi ~ normal(mu_pi_est, sd_pi_est);
   logit_f ~ normal(mu_f, sd_f);
   logit_fp ~ normal(logit_f, sd_f);
   logit_theta ~ normal(mu_theta, sd_theta);
@@ -119,6 +121,8 @@ model {
                      ((1.0 - theta_lp[i,j])/theta_lp[i,j])*(1.0 - pi[i]));
     }
   }
+  mu_pi_est ~ normal(0.0, sd_pi);
+  sd_pi_est ~ normal(mu_pi, sd_pi);
 }
 
 generated quantities {
