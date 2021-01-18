@@ -21,6 +21,8 @@ parameters {
 }
 
 transformed parameters {
+  real mu_pi_est;             // mean logit of allele frequency
+  real<lower=0> sd_pi_est;    // sd of logit(pi)
   real<lower=0, upper=1> f;     // within-population inbreeding coefficient
   vector<lower=0, upper=1>[N_loci] pi;  // mean allele frequencies
   // allele frequencies by locus & population
@@ -58,8 +60,10 @@ model {
 
   // priors
   //
-  logit_pi ~ normal(mu_pi, sd_pi);
+  logit_pi ~ normal(mu_pi_est, sd_pi_est);
   logit_f ~ normal(mu_f, sd_f);
+  mu_pi_est ~ normal(0.0, sd_pi);
+  sd_pi_est ~ normal(mu_pi, sd_pi);
 }
 
 generated quantities {
