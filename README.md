@@ -43,7 +43,7 @@ install.packages("devtools")
 Once that's installed, then you can install `Hickory` like this:
 
 ```
-install.packages("bayesplot", "rstan", "tidyverse")
+install.packages(c("bayesplot", "rstan", "tidyverse"))
 devtools::install_github("kholsinger/Hickory")
 ```
 
