@@ -1,8 +1,8 @@
 ---
-title: "Interpreting estimates from dominant markers"
+title: "Dominant markers"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dominant}
+  %\VignetteIndexEntry{Dominant markers}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

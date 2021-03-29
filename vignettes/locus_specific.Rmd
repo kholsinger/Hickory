@@ -1,8 +1,8 @@
 ---
-title: "Locus- and population-specific estimates"
+title: "Locus and population specific estimates"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{locus_specific}
+  %\VignetteIndexEntry{Locus and population specific estimates}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
