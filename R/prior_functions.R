@@ -80,7 +80,9 @@ initialize_chains <- function() {
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
 
-  logit_pi <- rnorm(N_loci, logit_prior_pi$mu, logit_prior_pi$sd)
+  ## as.array() in case there is only one locus in the data set
+  ##
+  logit_pi <- as.array(rnorm(N_loci, logit_prior_pi$mu, logit_prior_pi$sd))
   logit_f <- rnorm(1, logit_prior_f$mu, logit_prior_f$sd)
   logit_theta <- rnorm(1, logit_prior_theta$mu, logit_prior_theta$sd)
 
