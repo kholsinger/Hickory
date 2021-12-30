@@ -41,7 +41,7 @@ summarize_f <- function(fit, genos, prob = 0.05) {
   f <- rstan::extract(fit, pars = "f")$f
   for (i in 1:genos$N_pops) {
     for (j in 1:genos$N_loci) {
-      interval <- quantile(f[, i, j], c(prob/2.0, 1 - prob/2.0))
+      interval <- stats::quantile(f[, i, j], c(prob/2.0, 1 - prob/2.0))
       if ((interval[1] > 0.0) || (interval[2] < 0.0)) {
         cat("f[",
             rownames(genos$N)[i], ",",

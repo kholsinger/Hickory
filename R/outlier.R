@@ -45,7 +45,7 @@ report_outliers_ <- function(labels, theta, theta_l, alpha) {
   n_sample <- length(theta)
   for (i in 1:n_labels) {
     diff <- theta_l[, i] - theta
-    interval <- quantile(diff, c(alpha/2.0, 1.0 - alpha/2.0))
+    interval <- stats::quantile(diff, c(alpha/2.0, 1.0 - alpha/2.0))
     if ((interval[1] > 0) || (interval[2] < 0)) {
       cat(labels[i], ": ", round(mean(diff), 3), " (",
           round(interval[1], 3), ",", round(interval[2], 3), ")\n", sep = "")
