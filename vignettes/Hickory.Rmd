@@ -74,7 +74,10 @@ Analysis of co-dominant marker data consists of two steps:
 If you have a fairly modern computer with multiple cores and a reasonable amount of memory, I recommend including the `options(mc.cores = parallel::detectCores())`. This will allow the four chains to run simultaneously and reduce the total running time by about a factor of four. You only need to do this once per session.
 
 ```{r}
-options(mc.cores = parallel::detectCores())
+## NOTE: I recommend including the following line when you run Hickory,
+## but the code check for CRAN doesn't allow multiple threads
+##
+# options(mc.cores = parallel::detectCores())
 
 ## set the random number seed to ensure reproducible results
 ##
