@@ -26,10 +26,6 @@ years. I can probably help with Mac or Linux problems, but I may not
 be much help with Windows. If you've managed to install other R
 packages from source, you'll probably be just fine.
 
-IMPORTANT NOTE: The [RStan Getting Started](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started) 
-site notes that you have to have at least R v3.4.0 or later, but they
-strongly recommend using R v4.0.0 or later.
-
 I also specified minimum versions for all of the libraries that `Hickory`
 depends on. It's possible I could get away with earlier versions, but
 I don't have a way to test that. That means you might need to upgrade
