@@ -70,7 +70,7 @@ mcmc_trace(fit_array[, , c("f", "theta")])
 
 You should get a trace plot showing the values taking during sampling for each of the four chains. What you want to see is that the chains are broadly overlapping like this (produced from a default run with codominant markers - `protea_repens.csv`).
 
-![Traceplots from analysis of `protea_repens.csv`](protea_repens.png)
+![Traceplots from analysis of `protea_repens.csv`](figure/protea_repens.png)
 
 With high autocorrelation, the traces will change more gradually, but if they are broadly overlapping and all of the "explore" the same space, the results are likely to be reliable.
 

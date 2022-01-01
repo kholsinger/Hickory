@@ -38,7 +38,7 @@ logit_prior <- function(prior) {
   return(list(mu = mean, sd = sd))
 }
 
-#' Put priors in Hickory namespace so that they are available to
+#' Put priors in global namespace so that they are available to
 #' `initialize_chains()`.
 #'
 #' @export
@@ -50,14 +50,14 @@ logit_prior <- function(prior) {
 #' @return None
 #'
 set_priors <- function(prior_pi, prior_f, prior_theta, N_loci, N_pops) {
-  assign("prior_pi", prior_pi, envir = Hickory)
-  assign("prior_f", prior_f, envir = Hickory)
-  assign("prior_theta", prior_theta, envir = Hickory)
-  assign("N_loci", N_loci, envir = Hickory)
-  assign("N_pops", N_pops, envir = Hickory)
+  prior_pi <<- prior_pi
+  prior_f <<- prior_f
+  prior_theta <<- prior_theta
+  N_loci <<- N_loci
+  N_pops <<- N_pops
 }
 
-#' Put alpha ("tightness" of locus-specific theta) in the Hickory namespace
+#' Put alpha ("tightness" of locus-specific theta) in global namespace
 #' so that it is available to `initialize_loc_pop()`.
 #'
 #' @export
@@ -65,7 +65,7 @@ set_priors <- function(prior_pi, prior_f, prior_theta, N_loci, N_pops) {
 #' @return None
 #'
 set_alpha <- function(alpha) {
-  assign("prior_alpha", (1.0 - alpha)/alpha, envir = Hickory)
+  prior_alpha <<- (1.0 - alpha)/alpha
 }
 
 #' Initialize pi, f, and theta based on priors
@@ -76,17 +76,13 @@ set_alpha <- function(alpha) {
 #' @return list of ititial values for logit_pi, logit_f, and logit_theta
 #'
 initialize_chains <- function() {
-  prior_pi <- get("prior_pi", envir = Hickory)
-  prior_f <- get("prior_f", envir = Hickory)
-  prior_theta <- get("prior_theta", envir = Hickory)
-  N_loci <- get("N_loci", envir = Hickory)
   logit_prior_pi <- logit_prior(prior_pi)
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
 
-  logit_pi <- stats::rnorm(N_loci, logit_prior_pi$mu, logit_prior_pi$sd)
-  logit_f <- stats::rnorm(1, logit_prior_f$mu, logit_prior_f$sd)
-  logit_theta <- stats::rnorm(1, logit_prior_theta$mu, logit_prior_theta$sd)
+  logit_pi <- rnorm(N_loci, logit_prior_pi$mu, logit_prior_pi$sd)
+  logit_f <- rnorm(1, logit_prior_f$mu, logit_prior_f$sd)
+  logit_theta <- rnorm(1, logit_prior_theta$mu, logit_prior_theta$sd)
 
   return(list(logit_pi = logit_pi,
               logit_f = logit_f,
@@ -102,18 +98,16 @@ initialize_chains <- function() {
 #' @return Initial values for all internal parameters
 #'
 initialize_locus_pop <- function() {
-  N_loci <- get("N_loci", envir = Hickory)
-  N_pops <- get("N_pops", envir = Hickory)
   chains <- initialize_chains()
   theta <- (prior_theta$upper + prior_theta$lower)/2
   theta_l <- numeric(N_loci)
   pi <- numeric(N_loci)
   p <- matrix(nrow = N_pops, ncol = N_loci)
   for (i in 1:N_loci) {
-    theta_l[i] <- stats::rbeta(1, theta*Hickory$prior_alpha, (1-theta)*Hickory$prior_alpha)
+    theta_l[i] <- rbeta(1, theta*prior_alpha, (1-theta)*prior_alpha)
     pi[i] <- inv_logit(chains$logit_pi[i])
     for (j in 1:N_pops) {
-      p[j, i] <- stats::rbeta(1, ((1-theta_l[i])/theta_l[i])*pi[i],
+      p[j, i] <- rbeta(1, ((1-theta_l[i])/theta_l[i])*pi[i],
                        ((1-theta_l[i])/theta_l[i])*(1-pi[i]))
     }
   }

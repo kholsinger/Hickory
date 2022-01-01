@@ -40,7 +40,7 @@ report_ <- function(labels, theta, alpha = 0.05) {
   n_labels <- length(labels)
   for (i in 1:n_labels) {
     xbar <- mean(theta[, i])
-    quant <- stats::quantile(theta[ ,i], c(alpha/2.0, 1.0 - alpha/2.0))
+    quant <- quantile(theta[ ,i], c(alpha/2.0, 1.0 - alpha/2.0))
     cat(labels[i], ": ", round(xbar, 3), " (",
         round(quant[1], 3), ",",
         round(quant[2], 3), ")\n", sep = "")

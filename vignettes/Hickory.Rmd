@@ -82,7 +82,6 @@ set.seed(1234)
 genos <- read_marker_data(system.file("extdata", "protea_repens.csv", package = "Hickory"))
 fit_free <- analyze_codominant(genos)
 ```
-
 ```{r echo = FALSE}
 f <- rstan::extract(fit_free)$f
 theta <- rstan::extract(fit_free)$theta
