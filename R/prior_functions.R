@@ -103,7 +103,6 @@ initialize_chains <- function() {
 #' @return Initial values for all internal parameters
 #'
 initialize_locus_pop <- function() {
-  prior_theta <- get("prior_theta", envir = Hickory)
   N_loci <- get("N_loci", envir = Hickory)
   N_pops <- get("N_pops", envir = Hickory)
   chains <- initialize_chains()

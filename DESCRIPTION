@@ -1,6 +1,6 @@
 Package: Hickory
 Title: Analysis of within-population inbreeding and population differentiation
-Version: 0.1.1
+Version: 0.1
 Authors@R: 
     person(given = "Kent",
            family = "Holsinger",

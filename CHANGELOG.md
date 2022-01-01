@@ -1,7 +1,3 @@
-## 31 December 2021 - v0.1.1
-- Stopped using global namespace for several package variable. Defined
-  Hickory environment internally.
-
 ## 26 December
 - Added vignettes for locus- and population-specific effects and for
   dominant markers.

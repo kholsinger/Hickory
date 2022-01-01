@@ -32,10 +32,6 @@ read_marker_data <- function(filename) {
 
   locus <- colnames(markers)
 
-  ## needed to shut up devtools::check()
-  ##
-  utils::globalVariables("pop")
-
   n <- array(dim=c(N_pops, N_loci, 3))
   N <- matrix(nrow=N_pops, ncol=N_loci)
   for (i in 1:N_pops) {
