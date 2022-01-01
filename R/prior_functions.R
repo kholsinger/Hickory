@@ -80,9 +80,9 @@ initialize_chains <- function() {
   logit_prior_f <- logit_prior(prior_f)
   logit_prior_theta <- logit_prior(prior_theta)
 
-  logit_pi <- rnorm(N_loci, logit_prior_pi$mu, logit_prior_pi$sd)
-  logit_f <- rnorm(1, logit_prior_f$mu, logit_prior_f$sd)
-  logit_theta <- rnorm(1, logit_prior_theta$mu, logit_prior_theta$sd)
+  logit_pi <- stats::rnorm(N_loci, logit_prior_pi$mu, logit_prior_pi$sd)
+  logit_f <- stats::rnorm(1, logit_prior_f$mu, logit_prior_f$sd)
+  logit_theta <- stats::rnorm(1, logit_prior_theta$mu, logit_prior_theta$sd)
 
   return(list(logit_pi = logit_pi,
               logit_f = logit_f,
@@ -104,10 +104,10 @@ initialize_locus_pop <- function() {
   pi <- numeric(N_loci)
   p <- matrix(nrow = N_pops, ncol = N_loci)
   for (i in 1:N_loci) {
-    theta_l[i] <- rbeta(1, theta*prior_alpha, (1-theta)*prior_alpha)
+    theta_l[i] <- stats::rbeta(1, theta*prior_alpha, (1-theta)*prior_alpha)
     pi[i] <- inv_logit(chains$logit_pi[i])
     for (j in 1:N_pops) {
-      p[j, i] <- rbeta(1, ((1-theta_l[i])/theta_l[i])*pi[i],
+      p[j, i] <- stats::rbeta(1, ((1-theta_l[i])/theta_l[i])*pi[i],
                        ((1-theta_l[i])/theta_l[i])*(1-pi[i]))
     }
   }
