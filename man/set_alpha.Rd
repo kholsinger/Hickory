@@ -2,7 +2,7 @@
 % Please edit documentation in R/prior_functions.R
 \name{set_alpha}
 \alias{set_alpha}
-\title{Put alpha ("tightness" of locus-specific theta) in global namespace
+\title{Put alpha ("tightness" of locus-specific theta) in the Hickory namespace
 so that it is available to \code{initialize_loc_pop()}.}
 \usage{
 set_alpha(alpha)
@@ -14,6 +14,6 @@ set_alpha(alpha)
 None
 }
 \description{
-Put alpha ("tightness" of locus-specific theta) in global namespace
+Put alpha ("tightness" of locus-specific theta) in the Hickory namespace
 so that it is available to \code{initialize_loc_pop()}.
 }

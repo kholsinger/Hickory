@@ -2,7 +2,7 @@
 % Please edit documentation in R/prior_functions.R
 \name{set_priors}
 \alias{set_priors}
-\title{Put priors in global namespace so that they are available to
+\title{Put priors in Hickory namespace so that they are available to
 \code{initialize_chains()}.}
 \usage{
 set_priors(prior_pi, prior_f, prior_theta, N_loci, N_pops)
@@ -22,6 +22,6 @@ set_priors(prior_pi, prior_f, prior_theta, N_loci, N_pops)
 None
 }
 \description{
-Put priors in global namespace so that they are available to
+Put priors in Hickory namespace so that they are available to
 \code{initialize_chains()}.
 }
